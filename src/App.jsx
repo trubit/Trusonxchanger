@@ -12,6 +12,19 @@ import Artbitrage from "./pages/arbitrage";
 import Subscription from "./pages/subscription";
 import Trade from "./pages/trade";
 import Contact from "./pages/contact";
+import About from "./pages/About";
+import PrivacyPolicy from "./pages/PrivacyPolicy";
+import CookiePolicy from "./pages/CookiePolicy";
+import CompliancePolicy from "./pages/CompliancePolicy";
+import WhistleblowingPolicy from "./pages/WhistleblowingPolicy";
+import AntiBriberyPolicy from "./pages/AntiBriberyPolicy";
+import UserAgreement from "./pages/UserAgreement";
+import CookieBanner from "./pages/CookieBanner";
+import ElectronicCommunications from "./pages/ElectronicCommunications";
+import AssetListingPolicy from "./pages/AssetListingPolicy";
+import TradingRules from "./pages/TradingRules";
+import LiquidationGuard from "./pages/LiquidationGuard";
+import FeeSchedule from "./pages/FeeSchedule";
 
 import Terms from "./pages/terms";
 
@@ -43,6 +56,7 @@ const App = () => {
     "/Dashboard",
     "/trade",
     "/Blogs",
+    "/blog",
     "/BlogUpdate",
     "/Spot",
     "/Futures",
@@ -70,6 +84,26 @@ const App = () => {
         <Route path="/subscription" element={<Subscription />} />
         <Route path="/trade" element={<Trade />} />
         <Route path="/contact" element={<Contact />} />
+        <Route path="/about" element={<About />} />
+        <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+        <Route path="/cookie-policy" element={<CookiePolicy />} />
+        <Route path="/compliance-policy" element={<CompliancePolicy />} />
+        <Route
+          path="/whistleblowing-policy"
+          element={<WhistleblowingPolicy />}
+        />
+        <Route path="/anti-bribery-policy" element={<AntiBriberyPolicy />} />
+        <Route path="/user-agreement" element={<UserAgreement />} />
+        <Route path="/cookie-banner" element={<CookieBanner />} />
+        <Route
+          path="/electronic-communications"
+          element={<ElectronicCommunications />}
+        />
+        <Route path="/asset-listing-policy" element={<AssetListingPolicy />} />
+        <Route path="/trading-rules" element={<TradingRules />} />
+        <Route path="/liquidation-guard" element={<LiquidationGuard />} />
+        <Route path="/fee-schedule" element={<FeeSchedule />} />
+        <Route path="/blog" element={<Blogs />} />
         <Route path="/Blogs" element={<Blogs />} />
         <Route path="/BlogUpdate" element={<BlogUpdate />} />
         <Route path="/blogs/:id" element={<BlogDetail />} />

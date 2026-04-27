@@ -70,79 +70,135 @@ const toPayload = (body) => ({
   date: body.date?.trim() ?? "",
 });
 
+const findBySlugOrId = async (key) => {
+  if (mongoose.Types.ObjectId.isValid(key)) {
+    const post = await Blog.findById(key);
+    if (post) return post;
+  }
+  return Blog.findOne({ slug: key });
+};
+
 // GET /blogs: list recent blog posts.
 export const listBlogs = async (req, res) => {
-  const limit = parseLimit(req.query.limit);
-  const sort = parseSort(req.query.sort);
-  const query = Blog.find().sort(sort);
-  if (limit) {
-    query.limit(limit);
+  try {
+    const limit = parseLimit(req.query.limit);
+    const sort = parseSort(req.query.sort);
+    const query = Blog.find().sort(sort);
+    if (limit) {
+      query.limit(limit);
+    }
+    const posts = await query;
+    res.json({ posts });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
   }
-  const posts = await query;
-  res.json({ posts });
 };
 
 // GET /blogs/:id: fetch a single post.
 export const getBlog = async (req, res) => {
-  const key = req.params.id;
-  let post = null;
-
-  if (mongoose.Types.ObjectId.isValid(key)) {
-    post = await Blog.findById(key);
+  try {
+    const post = await findBySlugOrId(req.params.id);
+    if (!post) {
+      return res.status(404).json({ message: "Post not found." });
+    }
+    return res.json({ post });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
   }
-
-  if (!post) {
-    post = await Blog.findOne({ slug: key });
-  }
-
-  if (!post) {
-    return res.status(404).json({ message: "Post not found." });
-  }
-  return res.json({ post });
 };
 
 // POST /blogs: create a blog post.
 export const createBlog = async (req, res) => {
-  const payload = toPayload(req.body);
-  if (!payload.title || !payload.description) {
-    return res.status(400).json({
-      message: "Title and description are required.",
-    });
+  try {
+    const payload = toPayload(req.body);
+    if (!payload.title || !payload.description) {
+      return res.status(400).json({
+        message: "Title and description are required.",
+      });
+    }
+    payload.slug = await ensureUniqueSlug(slugify(payload.title));
+    const post = await Blog.create(payload);
+    return res.status(201).json({ post });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
   }
-  payload.slug = await ensureUniqueSlug(slugify(payload.title));
-  const post = await Blog.create(payload);
-  return res.status(201).json({ post });
 };
 
-// PATCH /blogs/:id: update a blog post.
+// PUT /blogs/:id: update a blog post.
 export const updateBlog = async (req, res) => {
-  const payload = toPayload(req.body);
-  if (!payload.title || !payload.description) {
-    return res.status(400).json({
-      message: "Title and description are required.",
-    });
-  }
-  payload.slug = await ensureUniqueSlug(
-    slugify(payload.title),
-    req.params.id,
-  );
+  try {
+    const payload = toPayload(req.body);
+    if (!payload.title || !payload.description) {
+      return res.status(400).json({
+        message: "Title and description are required.",
+      });
+    }
 
-  const post = await Blog.findByIdAndUpdate(req.params.id, payload, {
-    new: true,
-    runValidators: true,
-  });
-  if (!post) {
-    return res.status(404).json({ message: "Post not found." });
+    const post = await findBySlugOrId(req.params.id);
+    if (!post) {
+      return res.status(404).json({ message: "Post not found." });
+    }
+
+    payload.slug = await ensureUniqueSlug(
+      slugify(payload.title),
+      post._id,
+    );
+
+    Object.assign(post, payload);
+    await post.save();
+
+    return res.json({ post });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
   }
-  return res.json({ post });
 };
 
 // DELETE /blogs/:id: remove a blog post.
 export const deleteBlog = async (req, res) => {
-  const post = await Blog.findByIdAndDelete(req.params.id);
-  if (!post) {
-    return res.status(404).json({ message: "Post not found." });
+  try {
+    const post = await findBySlugOrId(req.params.id);
+    if (!post) {
+      return res.status(404).json({ message: "Post not found." });
+    }
+    await post.deleteOne();
+    return res.json({ ok: true });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
   }
-  return res.json({ ok: true });
-}; 
+};
 
+// POST /blogs/:id/like: increment like counter.
+export const likeBlog = async (req, res) => {
+  try {
+    const post = await findBySlugOrId(req.params.id);
+    if (!post) {
+      return res.status(404).json({ message: "Post not found." });
+    }
+    post.likes = (post.likes || 0) + 1;
+    await post.save();
+    return res.json({ post });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+
+// GET /blogs/:id/related: get related posts.
+export const getRelatedBlogs = async (req, res) => {
+  try {
+    const post = await findBySlugOrId(req.params.id);
+    if (!post) {
+      return res.status(404).json({ message: "Post not found." });
+    }
+
+    const tag = post.tag;
+    const query = { _id: { $ne: post._id } };
+    if (tag) {
+      query.tag = tag;
+    }
+
+    const related = await Blog.find(query).sort({ updatedAt: -1 }).limit(5);
+    res.json({ posts: related });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};

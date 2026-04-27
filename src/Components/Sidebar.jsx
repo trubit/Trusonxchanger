@@ -30,6 +30,24 @@ const makeExcerpt = (value, limit = 110) => {
   return `${plain.slice(0, limit).trim()}...`;
 };
 
+const estimateReadTime = (value) => {
+  const plain = stripHtml(value);
+  if (!plain) return 0;
+  const words = plain.split(/\s+/).filter(Boolean).length;
+  return Math.max(1, Math.round(words / 220));
+};
+
+const formatDate = (value) => {
+  if (!value) return "";
+  const parsed = new Date(value);
+  if (Number.isNaN(parsed.getTime())) return "";
+  return parsed.toLocaleDateString("en-US", {
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+  });
+};
+
 const extractPost = (payload) => {
   if (!payload) return null;
   if (payload.post && typeof payload.post === "object") return payload.post;
@@ -53,6 +71,8 @@ const normalizePost = (post) => {
     ...post,
     imageUrl: resolveImageUrl(post.image),
     excerpt: post.excerpt || makeExcerpt(post.description),
+    displayDate: post.date || formatDate(post.updatedAt || post.createdAt),
+    readTime: estimateReadTime(post.description || post.excerpt),
   };
 };
 
@@ -207,8 +227,10 @@ const Sidebar = ({ postId, onPostUpdate }) => {
 
   const handleSelectRelated = useCallback(
     (selectedPost) => {
-      if (!selectedPost?.id) return;
-      navigate(`/blogs/${selectedPost.id}`);
+      const targetId =
+        selectedPost?.slug || selectedPost?.id || selectedPost?._id;
+      if (!targetId) return;
+      navigate(`/blogs/${targetId}`);
     },
     [navigate],
   );
@@ -218,6 +240,33 @@ const Sidebar = ({ postId, onPostUpdate }) => {
   return (
     <aside className="crypto-sidebar">
       <div className="crypto-sidebar-shell">
+        <section className="crypto-sidebar-section crypto-context-section">
+          <p className="crypto-context-kicker">Article Snapshot</p>
+          <h3 className="crypto-context-title">{post?.title || "Loading..."}</h3>
+          {post?.excerpt ? (
+            <p className="crypto-context-excerpt">{post.excerpt}</p>
+          ) : null}
+          <div className="crypto-context-meta">
+            {post?.displayDate ? (
+              <span>
+                <i className="bi bi-calendar3" aria-hidden="true" />
+                {post.displayDate}
+              </span>
+            ) : null}
+            {post?.readTime ? (
+              <span>
+                <i className="bi bi-clock-history" aria-hidden="true" />
+                {post.readTime} min read
+              </span>
+            ) : null}
+            {post?.tag ? (
+              <span>
+                <i className="bi bi-bookmark-star" aria-hidden="true" />
+                {post.tag}
+              </span>
+            ) : null}
+          </div>
+        </section>
         <LikeButton
           likes={likes}
           onLike={handleLike}

@@ -32,18 +32,21 @@ const Signup = () => {
   } = useSignup();
 
   return (
-    <div className="min-vh-100 d-flex align-items-center justify-content-center py-4 px-4 main-card auth-shell">
+    <div className="min-vh-100 d-flex align-items-center justify-content-center py-4 px-4 main-card auth-shell signup-page">
       {/* Theme toggle button */}
       <ToggleTheme />
       <div className="container d-flex flex-column flex-lg-row gap-4 align-items-lg-start justify-content-center auth-stack">
         <AuthBranding />
-        <div className="d-flex align-items-center justify-content-center p-3 main-login-background  main-container-cards">
+        <div className="d-flex align-items-center justify-content-center p-3 main-login-background main-container-cards auth-panel">
           <div className="login-background">
             <div
-              className="card border-0 shadow-lg p-3 p-md-4 overflow-hidden "
+              className="card border-0 shadow-lg p-3 p-md-4 overflow-hidden auth-card auth-card-signup"
               id="card-border"
             >
               <h2 className="text-center fw-bold mb-1 auth-title">Sign Up</h2>
+              <p className="text-center mb-3 auth-subtitle">
+                Create your TrusonXchanger account to start trading with confidence.
+              </p>
 
               {errors.general && (
                 <Alert variant="danger" className="mb-3">
@@ -79,11 +82,11 @@ const Signup = () => {
               <Form onSubmit={handleSubmit}>
                 {/* Email */}
                 <Form.Group className="mb-2" controlId="signup-email">
-                  <Form.Label className="fw-medium">Enter Email</Form.Label>
+                  <Form.Label className="fw-medium">Email address</Form.Label>
                   <Form.Control
                     type="email"
                     name="email"
-                    placeholder="Enter your email"
+                    placeholder="name@example.com"
                     value={email}
                     size="md"
                     onChange={(e) => setEmail(e.target.value)}
@@ -98,7 +101,7 @@ const Signup = () => {
 
                 {/* Password */}
                 <Form.Group className="mb-2" controlId="signup-password">
-                  <Form.Label className="fw-medium">Enter Password</Form.Label>
+                  <Form.Label className="fw-medium">Create password</Form.Label>
                   <InputGroup size="md">
                     <Form.Control
                       type={showPassword ? "text" : "password"}
@@ -131,7 +134,7 @@ const Signup = () => {
                 {/* Confirm Password */}
                 <Form.Group className="mb-2" controlId="signup-confirm-password">
                   <Form.Label className="fw-medium">
-                    Confirm Password
+                    Confirm password
                   </Form.Label>
                   <InputGroup size="md">
                     <Form.Control
@@ -210,7 +213,6 @@ const Signup = () => {
                   type="submit"
                   className="w-100 fw-bold button-form"
                   disabled={isSubmitting}
-                  style={{}}
                 >
                   {isSubmitting ? (
                     <>
@@ -223,17 +225,17 @@ const Signup = () => {
                       Signing Up...
                     </>
                   ) : (
-                    "Signup"
+                    "Create account"
                   )}
                 </Button>
 
-                <div className="text-center mt-3 small ">
+                <div className="text-center mt-3 small auth-footer-text">
                   Already have an account? &nbsp;&nbsp;
                   <Link
                     to="/login"
-                    className="text-success fw-medium text-decoration-none "
+                    className="text-success fw-medium text-decoration-none auth-footer-link"
                   >
-                    Login
+                    Log in
                   </Link>
                 </div>
               </Form>

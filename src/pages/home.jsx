@@ -1,7 +1,13 @@
 import FirstSectionHome from "../Homepage/FirstSectionHome";
 import SecondSectionHomePage from "../Homepage/SecondSectionHomePage";
-import FeaturesSection from "../Components/FeaturesSection";
-import ArbitrageSection from "../Components/ArbitrageSection";
+import FeaturesSection from "../Homepage/FeaturesSection";
+import CryptoJourneySection from "../Homepage/CryptoJourneySection";
+import AnimatedLogoSection from "../Homepage/AnimatedLogoSection";
+import FAQSection from "../Homepage/FAQSection";
+import NewsletterSection from "../Homepage/NewsletterSection";
+import TradingExecutionSection from "../Homepage/TradingExecutionSection";
+import NavigationSection from "../Components/NavigationSection";
+import BottomBar from "../Components/BottomBar";
 
 // Homepage composition.
 const Home = () => {
@@ -9,8 +15,14 @@ const Home = () => {
     <>
       <FirstSectionHome />
       <SecondSectionHomePage />
-      <ArbitrageSection />
       <FeaturesSection />
+      <TradingExecutionSection />
+      <CryptoJourneySection />
+      <AnimatedLogoSection />
+      <FAQSection />
+      <NewsletterSection />
+      <NavigationSection />
+      <BottomBar />
     </>
   );
 };

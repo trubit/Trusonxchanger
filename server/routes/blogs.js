@@ -1,20 +1,27 @@
- import express from "express";
+import express from "express";
 import {
   createBlog,
   deleteBlog,
   getBlog,
+  getRelatedBlogs,
+  likeBlog,
   listBlogs,
   updateBlog,
 } from "../controllers/blogsController.js";
+import { requireAuth, requireRole } from "../middleware/auth.js";
 
-// Blog CRUD routes.
+// Blog CRUD and interaction routes.
 const router = express.Router();
 
+// Public routes.
 router.get("/", listBlogs);
 router.get("/:id", getBlog);
-router.post("/", createBlog);
-router.put("/:id", updateBlog);
-router.delete("/:id", deleteBlog);
+router.get("/:id/related", getRelatedBlogs);
+router.post("/:id/like", likeBlog);
 
-export default router; 
+// Admin-only routes.
+router.post("/", requireAuth, requireRole("admin"), createBlog);
+router.put("/:id", requireAuth, requireRole("admin"), updateBlog);
+router.delete("/:id", requireAuth, requireRole("admin"), deleteBlog);
 
+export default router;

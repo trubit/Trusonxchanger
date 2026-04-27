@@ -11,6 +11,7 @@ const BlogSchema = new mongoose.Schema(
     imageAlt: { type: String, default: "" },
     tag: { type: String, default: "" },
     date: { type: String, default: "" },
+    likes: { type: Number, default: 0 },
   },
   { timestamps: true }
 );

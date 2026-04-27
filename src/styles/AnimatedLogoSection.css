@@ -1,0 +1,705 @@
+/* AnimatedLogoSection.css — Premium security section with video + T overlay */
+
+.als-section {
+  background:
+    radial-gradient(
+      900px 460px at 5% 6%,
+      rgba(0, 214, 160, 0.12),
+      rgba(0, 214, 160, 0) 65%
+    ),
+    radial-gradient(
+      760px 420px at 98% 94%,
+      rgba(60, 102, 95, 0.24),
+      rgba(60, 102, 95, 0) 70%
+    ),
+    #06080b;
+  padding: clamp(2.2rem, 4.6vw, 4rem) 1rem;
+  position: relative;
+}
+
+.als-section::before {
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.06),
+    rgba(255, 255, 255, 0)
+  );
+  content: "";
+  height: 140px;
+  left: 0;
+  pointer-events: none;
+  position: absolute;
+  right: 0;
+  top: 0;
+}
+
+.als-container {
+  max-width: 1140px;
+  position: relative;
+  z-index: 1;
+}
+
+.als-shell {
+  background:
+    linear-gradient(165deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0)),
+    linear-gradient(180deg, rgba(12, 17, 22, 0.96), rgba(8, 12, 16, 0.98));
+  border: 1px solid rgba(138, 159, 171, 0.24);
+  border-radius: 28px;
+  box-shadow:
+    0 28px 56px rgba(0, 0, 0, 0.42),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  padding: clamp(34px, 4vw, 52px) clamp(22px, 3.4vw, 40px)
+    clamp(30px, 3.4vw, 46px);
+}
+
+.als-header {
+  margin-bottom: clamp(28px, 4vw, 42px);
+  text-align: center;
+}
+
+.als-label {
+  color: #00d6a0;
+  font-family: "Space Grotesk", "Manrope", sans-serif;
+  font-size: clamp(10px, 0.95vw, 13px);
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  line-height: 1.15;
+  margin-bottom: 12px;
+  text-transform: uppercase;
+}
+
+.als-heading {
+  color: #f3f7f9;
+  font-family: "Space Grotesk", "Manrope", sans-serif;
+  font-size: clamp(2rem, 4.8vw, 3.5rem);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.07;
+  margin: 0;
+  text-wrap: balance;
+}
+
+.als-col {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.als-card {
+  background:
+    linear-gradient(160deg, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0)),
+    linear-gradient(180deg, #141c24, #10171e);
+  border: 1px solid rgba(142, 166, 181, 0.22);
+  border-radius: 16px;
+  box-shadow:
+    0 14px 30px rgba(0, 0, 0, 0.34),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  color: #ffffff;
+  overflow: hidden;
+  padding: 20px 18px;
+  position: relative;
+  transition:
+    transform 0.24s ease,
+    border-color 0.24s ease,
+    box-shadow 0.24s ease;
+}
+
+.als-card:hover {
+  border-color: rgba(0, 214, 160, 0.45);
+  box-shadow:
+    0 20px 38px rgba(0, 0, 0, 0.4),
+    0 0 0 1px rgba(0, 214, 160, 0.18),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  transform: translateY(-4px);
+}
+
+.als-card::before {
+  background: linear-gradient(
+    145deg,
+    rgba(0, 214, 160, 0.12),
+    rgba(0, 214, 160, 0)
+  );
+  content: "";
+  height: 100px;
+  pointer-events: none;
+  position: absolute;
+  right: -30px;
+  top: -36px;
+  width: 120px;
+}
+
+.als-card-title {
+  color: #f3f7f9;
+  font-family: "Space Grotesk", "Manrope", sans-serif;
+  font-size: clamp(0.95rem, 1.25vw, 1.1rem);
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  line-height: 1.25;
+  margin: 0 0 8px;
+  position: relative;
+}
+
+.als-card-desc {
+  color: #9baab2;
+  font-size: 13.5px;
+  font-weight: 500;
+  line-height: 1.55;
+  position: relative;
+}
+
+/* Premium Animated T structure */
+.als-anim-wrap {
+  align-items: center;
+  display: flex;
+  height: 400px;
+  justify-content: center;
+  margin: 0 auto;
+  max-width: 400px;
+  perspective: 1000px;
+  position: relative;
+  width: 100%;
+}
+
+/* 3D Platform base */
+.als-base-platform {
+  background:
+    radial-gradient(
+      65% 35% at 50% 45%,
+      rgba(0, 214, 160, 0.3) 0%,
+      rgba(0, 214, 160, 0) 70%
+    ),
+    linear-gradient(180deg, #1a2630, #0f161c);
+  border: 1.5px solid rgba(0, 214, 160, 0.4);
+  border-radius: 50%;
+  box-shadow:
+    0 28px 70px rgba(0, 0, 0, 0.6),
+    0 0 0 1px rgba(0, 214, 160, 0.22),
+    inset 0 2px 0 rgba(255, 255, 255, 0.1);
+  height: 320px;
+  position: absolute;
+  transform: rotateX(60deg);
+  width: 320px;
+}
+
+/* Ambient halo behind everything */
+.als-halo {
+  animation: alsHaloBreathe 4s ease-in-out infinite;
+  background: radial-gradient(
+    55% 55% at 50% 50%,
+    rgba(0, 214, 160, 0.18) 0%,
+    rgba(0, 214, 160, 0.05) 45%,
+    rgba(0, 214, 160, 0) 70%
+  );
+  border-radius: 50%;
+  height: 380px;
+  position: absolute;
+  width: 380px;
+}
+
+/* Orbital tracks */
+.als-orbit-track {
+  border: 1.5px dashed rgba(0, 214, 160, 0.28);
+  border-radius: 50%;
+  height: 300px;
+  position: absolute;
+  width: 300px;
+}
+
+.als-orbit-track-1 {
+  animation: alsTrackSpin1 10s linear infinite;
+}
+
+.als-orbit-track-2 {
+  animation: alsTrackSpin2 14s linear infinite reverse;
+}
+
+.als-orbit-track-3 {
+  animation: alsTrackSpin3 9s linear infinite;
+}
+
+.als-satellite {
+  background: radial-gradient(
+    120% 120% at 30% 30%,
+    #7dffdb,
+    #00d6a0 45%,
+    #007a4d 100%
+  );
+  border-radius: 50%;
+  box-shadow:
+    0 0 12px rgba(0, 214, 160, 0.9),
+    0 0 28px rgba(0, 214, 160, 0.55);
+  height: 11px;
+  left: 50%;
+  margin-left: -5.5px;
+  margin-top: -5.5px;
+  position: absolute;
+  top: 0;
+  width: 11px;
+}
+
+/* Rotating ring spheres */
+.als-ring-sphere {
+  border-radius: 50%;
+  position: absolute;
+}
+
+.als-sphere-outer {
+  animation: alsSphereSpin 12s linear infinite;
+  border: 2.5px solid rgba(0, 214, 160, 0.4);
+  box-shadow:
+    0 0 0 1px rgba(0, 214, 160, 0.18),
+    0 0 50px rgba(0, 214, 160, 0.22),
+    inset 0 0 50px rgba(0, 214, 160, 0.15);
+  height: 340px;
+  width: 340px;
+}
+
+.als-sphere-outer::before {
+  animation: alsSpherePulse 3s ease-in-out infinite;
+  background: radial-gradient(
+    60% 60% at 50% 50%,
+    rgba(0, 214, 160, 0.25) 0%,
+    rgba(0, 214, 160, 0) 70%
+  );
+  border-radius: 50%;
+  content: "";
+  height: 100%;
+  left: 0;
+  position: absolute;
+  top: 0;
+  width: 100%;
+}
+
+.als-sphere-mid {
+  animation: alsSphereSpin 8s linear infinite reverse;
+  border: 2.5px solid rgba(0, 214, 160, 0.55);
+  box-shadow:
+    0 0 36px rgba(0, 214, 160, 0.35),
+    inset 0 0 36px rgba(0, 214, 160, 0.22);
+  height: 260px;
+  width: 260px;
+}
+
+.als-sphere-mid::after {
+  animation: alsSpherePulse 2.5s ease-in-out infinite 0.5s;
+  background: radial-gradient(
+    55% 55% at 50% 50%,
+    rgba(0, 214, 160, 0.32) 0%,
+    rgba(0, 214, 160, 0) 70%
+  );
+  border-radius: 50%;
+  content: "";
+  height: 100%;
+  left: 0;
+  position: absolute;
+  top: 0;
+  width: 100%;
+}
+
+.als-sphere-inner {
+  animation: alsSphereSpin 5s linear infinite;
+  border: 2.5px solid rgba(0, 214, 160, 0.7);
+  box-shadow:
+    0 0 48px rgba(0, 214, 160, 0.45),
+    inset 0 0 48px rgba(0, 214, 160, 0.28);
+  height: 180px;
+  width: 180px;
+}
+
+.als-sphere-inner::before {
+  animation: alsSpherePulse 2s ease-in-out infinite 1s;
+  background: radial-gradient(
+    50% 50% at 50% 50%,
+    rgba(0, 214, 160, 0.4) 0%,
+    rgba(0, 214, 160, 0) 70%
+  );
+  border-radius: 50%;
+  content: "";
+  height: 100%;
+  left: 0;
+  position: absolute;
+  top: 0;
+  width: 100%;
+}
+
+/* T Container */
+.als-t-container {
+  align-items: center;
+  display: flex;
+  height: 140px;
+  justify-content: center;
+  position: relative;
+  width: 140px;
+}
+
+.als-t-halo-ring {
+  animation: alsHaloBreathe 3s ease-in-out infinite 0.5s;
+  background: radial-gradient(
+    55% 55% at 50% 50%,
+    rgba(0, 214, 160, 0.5) 0%,
+    rgba(0, 214, 160, 0.2) 40%,
+    rgba(0, 214, 160, 0) 70%
+  );
+  border-radius: 50%;
+  height: 200px;
+  left: 50%;
+  position: absolute;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 200px;
+}
+
+.als-t-body {
+  align-items: center;
+  animation: alsTBreathe 3s ease-in-out infinite;
+  background: radial-gradient(
+    60% 60% at 50% 50%,
+    rgba(0, 214, 160, 0.5) 0%,
+    rgba(0, 214, 160, 0.18) 50%,
+    rgba(0, 214, 160, 0) 70%
+  );
+  border-radius: 50%;
+  display: flex;
+  height: 140px;
+  justify-content: center;
+  position: relative;
+  width: 140px;
+}
+
+.als-t-text {
+  background: linear-gradient(180deg, #ffffff 25%, #7dffdb 100%);
+  background-clip: text;
+  filter: drop-shadow(0 0 14px rgba(0, 214, 160, 0.9));
+  font-family: "Space Grotesk", "Manrope", sans-serif;
+  font-size: clamp(3.8rem, 9.5vw, 6rem);
+  font-weight: 900;
+  letter-spacing: -0.06em;
+  line-height: 1;
+  position: relative;
+  text-shadow:
+    0 0 22px rgba(0, 214, 160, 1),
+    0 0 50px rgba(0, 214, 160, 0.75),
+    0 0 90px rgba(0, 214, 160, 0.5),
+    0 0 140px rgba(0, 214, 160, 0.25);
+  -webkit-text-fill-color: transparent;
+  z-index: 2;
+}
+
+@keyframes alsSphereSpin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes alsSpherePulse {
+  0%,
+  100% {
+    opacity: 0.5;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.1);
+  }
+}
+
+@keyframes alsHaloBreathe {
+  0%,
+  100% {
+    opacity: 0.6;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.08);
+  }
+}
+
+@keyframes alsTBreathe {
+  0%,
+  100% {
+    box-shadow: 0 0 28px rgba(0, 214, 160, 0.4);
+    transform: scale(1);
+  }
+  50% {
+    box-shadow: 0 0 56px rgba(0, 214, 160, 0.7);
+    transform: scale(1.06);
+  }
+}
+
+@keyframes alsTrackSpin1 {
+  from {
+    transform: rotateX(55deg) rotateZ(0deg);
+  }
+  to {
+    transform: rotateX(55deg) rotateZ(360deg);
+  }
+}
+
+@keyframes alsTrackSpin2 {
+  from {
+    transform: rotateX(55deg) rotateY(35deg) rotateZ(0deg);
+  }
+  to {
+    transform: rotateX(55deg) rotateY(35deg) rotateZ(360deg);
+  }
+}
+
+@keyframes alsTrackSpin3 {
+  from {
+    transform: rotateX(55deg) rotateY(70deg) rotateZ(0deg);
+  }
+  to {
+    transform: rotateX(55deg) rotateY(70deg) rotateZ(360deg);
+  }
+}
+
+/* CTA */
+.als-cta-wrap {
+  display: flex;
+  justify-content: center;
+  margin-top: clamp(28px, 4vw, 42px);
+}
+
+.als-cta {
+  align-items: center;
+  background: linear-gradient(
+    145deg,
+    rgba(0, 214, 160, 0.4),
+    rgba(0, 214, 160, 0.16)
+  );
+  border: 1px solid rgba(0, 214, 160, 0.58);
+  border-radius: 11px;
+  box-shadow:
+    0 14px 30px rgba(0, 107, 81, 0.35),
+    inset 0 1px 0 rgba(255, 255, 255, 0.18);
+  color: #edfffa;
+  cursor: pointer;
+  display: inline-flex;
+  font-family: "Space Grotesk", "Manrope", sans-serif;
+  font-size: 0.93rem;
+  font-weight: 700;
+  gap: 8px;
+  letter-spacing: 0.01em;
+  min-width: 152px;
+  padding: 0.74rem 1.06rem;
+  text-decoration: none;
+  transition:
+    background 0.2s ease,
+    border-color 0.2s ease,
+    color 0.2s ease;
+}
+
+.als-cta:hover,
+.als-cta:focus-visible {
+  background: linear-gradient(
+    145deg,
+    rgba(0, 214, 160, 0.52),
+    rgba(0, 214, 160, 0.2)
+  );
+  border-color: rgba(89, 255, 201, 0.86);
+  color: #ffffff;
+}
+
+.als-cta-arrow {
+  height: 16px;
+  width: 16px;
+}
+
+/* -------------------------- Responsiveness ------------------------------ */
+@media (max-width: 991.98px) {
+  .als-anim-wrap {
+    height: 320px;
+    max-width: 320px;
+  }
+
+  .als-base-platform {
+    height: 260px;
+    width: 260px;
+  }
+
+  .als-halo {
+    height: 310px;
+    width: 310px;
+  }
+
+  .als-orbit-track {
+    height: 240px;
+    width: 240px;
+  }
+
+  .als-sphere-outer {
+    height: 280px;
+    width: 280px;
+  }
+
+  .als-sphere-mid {
+    height: 210px;
+    width: 210px;
+  }
+
+  .als-sphere-inner {
+    height: 140px;
+    width: 140px;
+  }
+
+  .als-t-container {
+    height: 110px;
+    width: 110px;
+  }
+
+  .als-t-body {
+    height: 110px;
+    width: 110px;
+  }
+
+  .als-t-halo-ring {
+    height: 160px;
+    width: 160px;
+  }
+}
+
+@media (max-width: 767.98px) {
+  .als-shell {
+    border-radius: 24px;
+    padding: 28px 18px 22px;
+  }
+
+  .als-anim-wrap {
+    height: 280px;
+    max-width: 280px;
+  }
+
+  .als-base-platform {
+    height: 220px;
+    width: 220px;
+  }
+
+  .als-halo {
+    height: 270px;
+    width: 270px;
+  }
+
+  .als-orbit-track {
+    height: 210px;
+    width: 210px;
+  }
+
+  .als-sphere-outer {
+    height: 240px;
+    width: 240px;
+  }
+
+  .als-sphere-mid {
+    height: 180px;
+    width: 180px;
+  }
+
+  .als-sphere-inner {
+    height: 120px;
+    width: 120px;
+  }
+
+  .als-t-container {
+    height: 95px;
+    width: 95px;
+  }
+
+  .als-t-body {
+    height: 95px;
+    width: 95px;
+  }
+
+  .als-t-halo-ring {
+    height: 140px;
+    width: 140px;
+  }
+}
+
+@media (max-width: 575.98px) {
+  .als-section {
+    padding: 1.8rem 0.85rem;
+  }
+
+  .als-shell {
+    border-radius: 20px;
+    padding: 22px 14px 18px;
+  }
+
+  .als-header {
+    margin-bottom: 22px;
+  }
+
+  .als-heading {
+    font-size: clamp(1.45rem, 8vw, 1.8rem);
+  }
+
+  .als-label {
+    font-size: 9px;
+  }
+
+  .als-card {
+    padding: 16px 14px;
+  }
+
+  .als-anim-wrap {
+    height: 240px;
+    max-width: 240px;
+  }
+
+  .als-base-platform {
+    height: 190px;
+    width: 190px;
+  }
+
+  .als-halo {
+    height: 230px;
+    width: 230px;
+  }
+
+  .als-orbit-track {
+    height: 180px;
+    width: 180px;
+  }
+
+  .als-sphere-outer {
+    height: 210px;
+    width: 210px;
+  }
+
+  .als-sphere-mid {
+    height: 155px;
+    width: 155px;
+  }
+
+  .als-sphere-inner {
+    height: 100px;
+    width: 100px;
+  }
+
+  .als-t-container {
+    height: 80px;
+    width: 80px;
+  }
+
+  .als-t-body {
+    height: 80px;
+    width: 80px;
+  }
+
+  .als-t-halo-ring {
+    height: 120px;
+    width: 120px;
+  }
+
+  .als-cta-wrap {
+    margin-top: 22px;
+  }
+
+  .als-cta {
+    min-width: 0;
+    width: 100%;
+  }
+}

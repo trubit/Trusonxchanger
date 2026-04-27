@@ -17,9 +17,11 @@ const RelatedPosts = ({ posts, loading, error, activeId, onSelect }) => {
       <div className="crypto-related-list">
         {posts.map((post) => (
           <PostCard
-            key={post.id}
+            key={post.id || post._id || post.slug}
             post={post}
-            isActive={String(post.id) === String(activeId)}
+            isActive={
+              String(post.id || post._id || post.slug) === String(activeId)
+            }
             onSelect={onSelect}
           />
         ))}

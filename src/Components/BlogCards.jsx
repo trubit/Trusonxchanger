@@ -15,21 +15,15 @@ export const BlogCarousel = ({ posts, activeIndex, onSelectIndex }) => {
         {posts.map((post) => {
           const slugOrId = post?.slug || post?.id || post?._id;
           const detailLink = slugOrId ? `/blogs/${slugOrId}` : post.link;
-          const readableSlug =
-            post?.slug ||
-            post?.title
-              ?.toLowerCase()
-              .replace(/[^a-z0-9]+/g, "-")
-              .replace(/(^-|-$)+/g, "");
-          const readableLink = readableSlug ? `/blogs/${readableSlug}` : "";
+          
           return (
-            <div className="blogs-slide" key={post.id}>
+            <div className="blogs-slide" key={post.id || slugOrId}>
               <NavLink
                 to={detailLink || "/blogs"}
                 className="blogs-feature-link"
                 aria-label={`Open ${post.title}`}
               >
-                <article className="blogs-feature-card" style={{ cursor: "pointer" }}>
+                <article className="blogs-feature-card">
                   <div
                     className="blogs-feature-media"
                     style={{
@@ -49,9 +43,6 @@ export const BlogCarousel = ({ posts, activeIndex, onSelectIndex }) => {
                     {post.date ? (
                       <p className="blogs-feature-date">{post.date}</p>
                     ) : null}
-                    {readableLink ? (
-                      <p className="blogs-feature-link">{readableLink}</p>
-                    ) : null}
                   </div>
                 </article>
               </NavLink>
@@ -63,7 +54,7 @@ export const BlogCarousel = ({ posts, activeIndex, onSelectIndex }) => {
       <div className="blogs-dots">
         {posts.map((post, index) => (
           <button
-            key={post.id}
+            key={post.id || index}
             type="button"
             className={`blogs-dot ${index === activeIndex ? "active" : ""}`}
             onClick={() => onSelectIndex?.(index)}
@@ -85,21 +76,15 @@ export const BlogGrid = ({ posts }) => {
       {posts.map((post) => {
         const slugOrId = post?.slug || post?.id || post?._id;
         const detailLink = slugOrId ? `/blogs/${slugOrId}` : post.link;
-        const readableSlug =
-          post?.slug ||
-          post?.title
-            ?.toLowerCase()
-            .replace(/[^a-z0-9]+/g, "-")
-            .replace(/(^-|-$)+/g, "");
-        const readableLink = readableSlug ? `/blogs/${readableSlug}` : "";
+
         return (
         <NavLink
           to={detailLink || "/blogs"}
           className="blogs-grid-link"
           aria-label={`Open ${post.title}`}
-          key={post.id}
+          key={post.id || slugOrId}
         >
-          <article className="blogs-grid-card" style={{ cursor: "pointer" }}>
+          <article className="blogs-grid-card">
             <div
               className="blogs-grid-media"
               style={{
@@ -116,9 +101,6 @@ export const BlogGrid = ({ posts }) => {
               <h3 className="blogs-grid-title">{post.title}</h3>
               <p className="blogs-grid-description">{post.description}</p>
               {post.date ? <p className="blogs-date">{post.date}</p> : null}
-              {readableLink ? (
-                <p className="blogs-grid-link-text">{readableLink}</p>
-              ) : null}
             </div>
           </article>
         </NavLink>

@@ -50,24 +50,24 @@ const Login = () => {
   }, [location.pathname, location.search, setError, setSuccess]);
 
   return (
-    <div className="position-relative min-vh-100 auth-shell py-4">
+    <div className="position-relative min-vh-100 auth-shell login-page py-4">
       {/* Theme toggle button */}
       <ToggleTheme />
       <div className="container d-flex flex-column flex-lg-row gap-4 align-items-lg-start justify-content-center auth-stack">
         <AuthBranding />
 
-        <div className="d-flex align-items-center justify-content-center p-3 main-login-background">
+        <div className="d-flex align-items-center justify-content-center p-3 main-login-background auth-panel">
           <div className="login-background">
             {/* Card */}
 
             <Card
-              className="border-0 shadow-xl overflow-hidden "
+              className="border-0 shadow-xl overflow-hidden auth-card auth-card-login"
               id="form-login"
             >
               <Card.Body className="p-3 p-md-4">
                 <h3 className="text-center fw-bold mb-1 auth-title">Log in</h3>
                 <p className="text-center mb-3 auth-subtitle">
-                  Welcome back! Login with your Email
+                  Welcome back. Sign in securely to your TrusonXchanger workspace.
                 </p>
 
                 {error && (
@@ -105,40 +105,37 @@ const Login = () => {
 
                 {/* Submit calls handleLogin, which hits /api/auth/login */}
                 <Form onSubmit={handleLogin}>
-                <Form.Group className="mb-2" controlId="login-email">
-                  <Form.Label className="fw-medium ">
-                    Email address
-                  </Form.Label>
-                  <Form.Control
-                    type="email"
-                    name="email"
-                    placeholder="name@example.com"
-                    value={email}
-                    size="md"
-                    onChange={(e) => setEmail(e.target.value)}
-                    disabled={isLoading}
+                  <Form.Group className="mb-2" controlId="login-email">
+                    <Form.Label className="fw-medium ">
+                      Email address
+                    </Form.Label>
+                    <Form.Control
+                      type="email"
+                      name="email"
+                      placeholder="name@example.com"
+                      value={email}
+                      size="md"
+                      onChange={(e) => setEmail(e.target.value)}
+                      disabled={isLoading}
                       className="form-control-email"
-                      style={{}}
                     />
                   </Form.Group>
 
-                <Form.Group className="mb-2" controlId="login-password">
-                  <Form.Label className="fw-medium ">Password</Form.Label>
-                  <InputGroup size="md">
-                    <Form.Control
-                      type={showPassword ? "text" : "password"}
-                      name="password"
-                      placeholder="Password"
-                      value={password}
-                      onChange={(e) => setPassword(e.target.value)}
-                      disabled={isLoading}
-                      className="border-end-0 form-control-password"
-                        style={{}}
+                  <Form.Group className="mb-2" controlId="login-password">
+                    <Form.Label className="fw-medium ">Password</Form.Label>
+                    <InputGroup size="md">
+                      <Form.Control
+                        type={showPassword ? "text" : "password"}
+                        name="password"
+                        placeholder="Password"
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                        disabled={isLoading}
+                        className="border-end-0 form-control-password"
                       />
 
                       <InputGroup.Text
                         className="input-group-text"
-                        style={{}}
                         onClick={togglePasswordVisibility}
                       >
                         {showPassword ? (
@@ -173,7 +170,6 @@ const Login = () => {
                     className="w-100 fw-bold button-form"
                     type="submit"
                     disabled={isLoading}
-                    style={{}}
                   >
                     {isLoading ? (
                       <>
@@ -190,11 +186,11 @@ const Login = () => {
                     )}
                   </Button>
 
-                  <div className="text-center mt-3 small ">
+                  <div className="text-center mt-3 small auth-footer-text">
                     No account yet? &nbsp;&nbsp;
                     <Link
                       to="/signup"
-                      className="text-success fw-medium text-decoration-none "
+                      className="text-success fw-medium text-decoration-none auth-footer-link"
                     >
                       Sign up for free
                     </Link>

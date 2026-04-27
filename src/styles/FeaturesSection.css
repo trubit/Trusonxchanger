@@ -1,176 +1,251 @@
 .tx-features {
-  background: #050608;
-  padding: 24px 0 40px;
+  --txf-bg: #06080b;
+  --txf-surface: #10161c;
+  --txf-border: rgba(138, 159, 171, 0.24);
+  --txf-accent: #00d6a0;
+  --txf-heading: #f3f7f9;
+  --txf-body: #9baab2;
+  background:
+    radial-gradient(
+      900px 460px at 5% 6%,
+      rgba(0, 214, 160, 0.12),
+      rgba(0, 214, 160, 0) 65%
+    ),
+    radial-gradient(
+      760px 420px at 98% 94%,
+      rgba(60, 102, 95, 0.24),
+      rgba(60, 102, 95, 0) 70%
+    ),
+    var(--txf-bg);
+  padding: clamp(30px, 5vw, 54px) 0 clamp(52px, 6vw, 72px);
+  position: relative;
+}
+
+.tx-features::before {
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.08),
+    rgba(255, 255, 255, 0)
+  );
+  content: "";
+  height: 140px;
+  left: 0;
+  pointer-events: none;
+  position: absolute;
+  right: 0;
+  top: 0;
 }
 
 .tx-features-container {
-  max-width: 1040px;
+  max-width: 1140px;
+  position: relative;
+  z-index: 1;
 }
 
 .tx-features-shell {
-  background: linear-gradient(180deg, #07090b 0%, #050608 100%);
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  border-radius: 26px;
-  padding: 50px 38px 46px;
+  background:
+    linear-gradient(165deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0)),
+    linear-gradient(180deg, rgba(12, 17, 22, 0.96), rgba(8, 12, 16, 0.98));
+  border: 1px solid var(--txf-border);
+  border-radius: 28px;
   box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.04),
-    0 18px 40px rgba(0, 0, 0, 0.48);
+    0 28px 56px rgba(0, 0, 0, 0.42),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  padding: clamp(34px, 4vw, 52px) clamp(22px, 3.4vw, 40px)
+    clamp(30px, 3.4vw, 46px);
 }
 
 .tx-features-header {
+  margin-bottom: clamp(28px, 4vw, 42px);
   text-align: center;
-  margin-bottom: 38px;
 }
 
 .tx-features-label {
-  color: #2dd46f;
-  font-size: 15px;
-  font-weight: 700;
-  letter-spacing: 0.08em;
+  color: var(--txf-accent);
+  font-size: clamp(10px, 0.95vw, 13px);
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  line-height: 1.15;
+  margin-bottom: 12px;
   text-transform: uppercase;
-  opacity: 0.82;
-  margin-bottom: 8px;
 }
 
 .tx-features-heading {
-  color: #ffffff;
-  font-size: 58px;
+  color: var(--txf-heading);
+  font-family: "Space Grotesk", "Manrope", sans-serif;
+  font-size: clamp(2rem, 4.8vw, 3.5rem);
   font-weight: 700;
-  line-height: 1.08;
+  letter-spacing: -0.02em;
+  line-height: 1.07;
   margin: 0;
-}
-
-.tx-features-gridBottom {
-  margin-top: 4px;
+  text-wrap: balance;
 }
 
 .tx-feature-card {
-  position: relative;
-  background: #090b0e;
-  border-radius: 14px;
-  border: 1px solid rgba(12, 146, 95, 0.35);
-  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.4);
+  background:
+    linear-gradient(155deg, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0)),
+    linear-gradient(180deg, #121a21, #0d141a 62%, #0b1217);
+  border: 1px solid rgba(127, 149, 161, 0.22);
+  border-radius: 16px;
+  box-shadow:
+    0 16px 30px rgba(0, 0, 0, 0.36),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
   overflow: hidden;
+  position: relative;
+  transition:
+    transform 0.24s ease,
+    border-color 0.24s ease,
+    box-shadow 0.24s ease;
 }
 
 .tx-feature-card::before {
+  background: linear-gradient(
+    145deg,
+    rgba(0, 214, 160, 0.14),
+    rgba(0, 214, 160, 0)
+  );
   content: "";
-  position: absolute;
-  inset: -1px;
-  border-radius: 14px;
+  height: 130px;
   pointer-events: none;
-  box-shadow: 0 0 0 1px rgba(45, 212, 111, 0.05);
+  position: absolute;
+  right: -40px;
+  top: -50px;
+  width: 150px;
+}
+
+.tx-feature-card:hover {
+  border-color: rgba(0, 214, 160, 0.45);
+  box-shadow:
+    0 22px 38px rgba(0, 0, 0, 0.42),
+    0 0 0 1px rgba(0, 214, 160, 0.18),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  transform: translateY(-4px);
 }
 
 .tx-feature-body {
-  padding: 16px 14px 12px;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding: 17px 15px 13px;
 }
 
 .tx-feature-top {
-  display: flex;
   align-items: flex-start;
+  display: flex;
+  gap: 11px;
   justify-content: space-between;
-  gap: 10px;
-  margin-bottom: 10px;
 }
 
 .tx-feature-title {
-  color: #ffffff;
-  font-size: 20px;
+  color: var(--txf-heading);
+  font-family: "Space Grotesk", "Manrope", sans-serif;
+  font-size: clamp(1.1rem, 1.45vw, 1.35rem);
   font-weight: 700;
-  line-height: 1.15;
-  margin-top: 1px;
+  letter-spacing: -0.01em;
+  line-height: 1.2;
+  margin: 0;
 }
 
 .tx-feature-iconWrap {
-  width: 30px;
-  height: 30px;
-  border-radius: 7px;
-  background: transparent;
-  box-shadow: none;
-  display: grid;
-  place-items: center;
+  align-items: center;
+  background: linear-gradient(
+    145deg,
+    rgba(0, 214, 160, 0.24),
+    rgba(0, 214, 160, 0.08)
+  );
+  border: 1px solid rgba(0, 214, 160, 0.38);
+  border-radius: 10px;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.14);
+  display: flex;
   flex: 0 0 auto;
+  height: 34px;
+  justify-content: center;
+  width: 34px;
 }
 
 .tx-feature-icon {
-  width: 30px;
-  height: 30px;
-  object-fit: contain;
+  border-radius: 8px;
   display: block;
-  filter: none;
-  border-radius: 7px;
+  filter: saturate(1.05);
+  height: 22px;
+  object-fit: contain;
+  width: 22px;
+}
+
+.tx-feature-divider {
+  background: linear-gradient(
+    90deg,
+    rgba(0, 214, 160, 0.5),
+    rgba(0, 214, 160, 0.06)
+  );
+  border-radius: 999px;
+  display: block;
+  height: 1px;
+  margin: 11px 0 12px;
+  width: 100%;
 }
 
 .tx-feature-desc {
-  color: rgba(255, 255, 255, 0.72);
+  color: var(--txf-body);
   font-size: 14px;
   font-weight: 500;
-  line-height: 1.45;
+  line-height: 1.52;
   margin-bottom: 12px;
-  max-width: 100%;
 }
 
 .tx-feature-imageFrame {
-  background: #0a0b0d;
-  border-radius: 8px;
-  border: 1px solid rgba(255, 255, 255, 0.06);
-  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.25);
+  background: #0b1117;
+  border: 1px solid rgba(139, 160, 170, 0.2);
+  border-radius: 12px;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  margin-top: auto;
+  overflow: hidden;
   padding: 8px;
 }
 
 .tx-feature-image {
-  width: 100%;
-  height: 141px;
-  object-fit: contain;
-  border-radius: 5px;
+  background: #0a0f14;
+  border-radius: 8px;
   display: block;
-  background: #0b0b0b;
+  height: 145px;
+  object-fit: cover;
+  width: 100%;
 }
 
 @media (max-width: 991px) {
-  .tx-features {
-    padding: 22px 0 34px;
-  }
-
   .tx-features-container {
-    max-width: 620px;
-  }
-
-  .tx-features-heading {
-    font-size: 44px;
+    max-width: 700px;
   }
 
   .tx-features-shell {
-    padding: 42px 30px 34px;
+    border-radius: 24px;
   }
 }
 
 @media (max-width: 767px) {
-  .tx-features-header {
-    margin-bottom: 18px;
-  }
-
-  .tx-features-label {
-    font-size: 8px;
-    margin-bottom: 8px;
-  }
-
-  .tx-features-heading {
-    font-size: 31px;
+  .tx-features {
+    padding: 28px 0 44px;
   }
 
   .tx-features-shell {
-    padding: 34px 20px 26px;
-    border-radius: 22px;
+    border-radius: 20px;
+    padding: 28px 18px 22px;
   }
 
-  .tx-feature-title {
-    font-size: 17px;
+  .tx-features-header {
+    margin-bottom: 22px;
+  }
+
+  .tx-feature-body {
+    padding: 14px 12px 10px;
+  }
+
+  .tx-feature-desc {
+    font-size: 13px;
   }
 
   .tx-feature-image {
-    height: 120px;
+    height: 128px;
   }
 }
 
@@ -180,52 +255,29 @@
     padding-right: 14px;
   }
 
-  .tx-features-shell {
-    padding: 28px 14px 20px;
-    border-radius: 20px;
-  }
-
   .tx-features-heading {
-    font-size: 24px;
+    font-size: clamp(1.45rem, 8vw, 1.8rem);
   }
 
-  .tx-features-grid > .tx-col {
-    flex: 0 0 50%;
-    max-width: 50%;
-  }
-
-  .tx-features-gridBottom > .tx-col {
-    flex: 0 0 100%;
-    max-width: 100%;
+  .tx-features-label {
+    font-size: 9px;
   }
 
   .tx-feature-title {
-    font-size: 12px;
+    font-size: 1rem;
   }
 
   .tx-feature-iconWrap {
-    width: 24px;
-    height: 24px;
-    border-radius: 5px;
+    height: 30px;
+    width: 30px;
   }
 
   .tx-feature-icon {
-    width: 24px;
-    height: 24px;
-  }
-
-  .tx-feature-desc {
-    font-size: 8px;
-    line-height: 1.45;
-    margin-bottom: 8px;
-  }
-
-  .tx-feature-imageFrame {
-    padding: 6px;
+    height: 19px;
+    width: 19px;
   }
 
   .tx-feature-image {
-    height: 78px;
-    border-radius: 4px;
+    height: 108px;
   }
 }

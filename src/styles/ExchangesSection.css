@@ -1,35 +1,82 @@
 .exchanges-section-bg {
-  background: #f8f9fb;
+  background:
+    radial-gradient(
+      760px 420px at 6% -2%,
+      rgba(0, 214, 160, 0.1),
+      rgba(0, 214, 160, 0) 66%
+    ),
+    radial-gradient(
+      680px 380px at 96% 100%,
+      rgba(66, 95, 110, 0.2),
+      rgba(66, 95, 110, 0) 70%
+    ),
+    #080d12;
+  padding: clamp(1.5rem, 3.2vw, 2.6rem) 0 clamp(2rem, 3.8vw, 3rem);
+}
+
+.exchanges-shell {
+  background:
+    linear-gradient(165deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0)),
+    linear-gradient(180deg, rgba(13, 20, 27, 0.96), rgba(9, 14, 20, 0.98));
+  border: 1px solid rgba(138, 162, 176, 0.22);
+  border-radius: 26px;
+  box-shadow:
+    0 24px 48px rgba(0, 0, 0, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  padding: clamp(1.2rem, 2.5vw, 2rem);
+}
+
+.exchanges-kicker {
+  color: #00d6a0;
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  margin: 0 0 0.62rem;
+  text-transform: uppercase;
 }
 
 .exchanges-title {
-  font-size: 1.6rem;
-  font-weight: 600;
-  color: #23272f;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  margin-bottom: 1.5rem;
-  line-height: 1.1;
-  font-family: "Segoe UI", "Roboto", "Arial", sans-serif;
+  color: #f2f7fb;
+  font-family: "Space Grotesk", "Manrope", sans-serif;
+  font-size: clamp(1.55rem, 3vw, 2.35rem);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.08;
+  margin-bottom: 0.75rem;
+}
+
+.exchanges-subtitle {
+  color: #9cb1be;
+  font-size: 0.96rem;
+  line-height: 1.6;
+  margin: 0 0 1.15rem;
+  max-width: 560px;
 }
 
 .exchanges-slider-outer {
-  overflow: hidden;
-  width: 100%;
-  position: relative;
-  height: 100px;
-  display: flex;
   align-items: center;
-  min-height: 100px;
+  background: rgba(12, 19, 25, 0.7);
+  border: 1px solid rgba(141, 165, 179, 0.2);
+  border-radius: 14px;
+  display: flex;
+  height: 92px;
+  min-height: 92px;
+  overflow: hidden;
+  position: relative;
+  width: 100%;
 }
 
 .exchanges-slider-track {
-  display: flex;
   align-items: center;
-  gap: 2.5rem;
-  animation: slide-exchanges 50s linear infinite;
+  animation: slide-exchanges 52s linear infinite;
+  display: flex;
+  gap: 1.8rem;
+  height: 92px;
   will-change: transform;
-  height: 100px;
+}
+
+.exchanges-slider-outer:hover .exchanges-slider-track {
+  animation-play-state: paused;
 }
 
 @keyframes slide-exchanges {
@@ -42,106 +89,86 @@
 }
 
 .exchange-item {
-  display: flex;
   align-items: center;
-  gap: 0.75rem;
-  min-width: 140px;
+  display: flex;
+  gap: 0.62rem;
+  min-width: 132px;
   padding: 0 0.5rem;
 }
 
 .exchange-logo {
-  width: 38px;
-  height: 38px;
-  object-fit: contain;
+  background: rgba(18, 28, 36, 0.9);
+  border: 1px solid rgba(152, 176, 190, 0.24);
   border-radius: 50%;
-  background: #f1f3f6;
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.28);
+  height: 34px;
+  object-fit: contain;
+  width: 34px;
 }
 
 .exchange-name {
-  font-size: 1.05rem;
-  font-weight: 500;
-  color: #333;
+  color: #d4e4ed;
+  font-size: 0.9rem;
+  font-weight: 600;
   white-space: nowrap;
 }
 
 .metrics-row {
-  padding: 0;
-  gap: 0.5rem;
-  height: 100px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
+  display: grid;
+  gap: 0.72rem;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
 }
 
 .metric-block {
-  min-width: 100px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  height: 100%;
+  background:
+    linear-gradient(160deg, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0)),
+    linear-gradient(180deg, #121b24, #0d151d);
+  border: 1px solid rgba(138, 163, 178, 0.2);
+  border-radius: 12px;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  padding: 0.95rem 0.45rem;
 }
 
 .metric-number {
-  font-size: 2.2rem;
+  color: #f2f8fc;
+  font-family: "Space Grotesk", "Manrope", sans-serif;
+  font-size: clamp(1.25rem, 2.2vw, 1.72rem);
   font-weight: 700;
-  color: #a0a0a0;
-  line-height: 1.1;
+  line-height: 1.08;
 }
 
 .metric-label {
-  font-size: 1rem;
-  color: #888;
-  margin-top: 0.25rem;
-  font-weight: 500;
+  color: #8ea5b3;
+  font-size: 0.77rem;
+  font-weight: 600;
+  margin-top: 0.28rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
 }
 
 @media (max-width: 991px) {
   .metrics-row {
-    padding: 0;
-    height: 80px;
-  }
-  .exchanges-slider-outer,
-  .exchanges-slider-track {
-    height: 80px;
-    min-height: 80px;
-  }
-  .exchanges-title {
-    font-size: 1.5rem;
-  }
-  .metric-number {
-    font-size: 1.5rem;
-  }
-  .metric-label {
-    font-size: 0.95rem;
-  }
-  .metric-block {
-    height: 80px;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 }
 
 @media (max-width: 767px) {
   .exchanges-slider-outer,
   .exchanges-slider-track {
-    height: 64px;
-    min-height: 64px;
+    height: 76px;
+    min-height: 76px;
   }
-  .exchange-logo {
-    width: 28px;
-    height: 28px;
-  }
+
   .exchange-item {
-    min-width: 100px;
+    min-width: 114px;
   }
+
+  .exchange-logo {
+    height: 30px;
+    width: 30px;
+  }
+
   .metrics-row {
-    flex-direction: column;
-    gap: 1.25rem;
-    padding: 0;
-    height: auto;
-  }
-  .metric-block {
-    min-width: 0;
-    height: 64px;
+    grid-template-columns: 1fr;
   }
 }

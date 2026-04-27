@@ -12,7 +12,7 @@ import "../styles/blogs.css";
 const Blogs = () => {
   const { visiblePosts, loading, error } = useBlogPosts();
   const carouselPosts = visiblePosts.slice(0, 4);
-  const { activeIndex, setActiveIndex } = useBlogs(visiblePosts);
+  const { activeIndex, setActiveIndex } = useBlogs(carouselPosts);
 
   return (
     <>

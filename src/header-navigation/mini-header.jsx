@@ -15,31 +15,33 @@ const MiniHeader = ({ showBreadcrumb = true }) => {
         expanded={expanded}
         onToggle={(nextExpanded) => setExpanded(nextExpanded)}
         collapseOnSelect
-        bg="dark"
         sticky="top"
         variant="dark"
         expand="lg"
-        className="py-3 shadow-sm nav-header"
-        style={{}}
+        className="tx-mini-header"
       >
-        <Container fluid="lg">
+        <Container fluid="lg" className="tx-mini-header-inner">
           <Navbar.Brand
             as={NavLink}
             to="/"
-            className="fs-3 fw-bold container-nav"
-            style={{}}
+            className="tx-mini-brand"
           >
-            TrusonXchanger
+            <span className="tx-mini-brand-mark" aria-hidden="true">
+              TX
+            </span>
+            <span className="tx-mini-brand-text">TrusonXchanger</span>
           </Navbar.Brand>
 
-          {/* this is for hamburger button*/}
-          <Navbar.Toggle aria-controls="responsive-navbar-nav" />
+          <Navbar.Toggle
+            aria-controls="responsive-navbar-nav"
+            className="tx-mini-toggler"
+          />
           <Navbar.Collapse id="responsive-navbar-nav">
-            <Nav className="me-auto mb-2 mb-lg-0">
+            <Nav className="me-auto mb-2 mb-lg-0 tx-mini-nav">
               <Nav.Link
                 as={NavLink}
                 to="/Spot"
-                className="fw-medium nav-instant-green"
+                className="tx-mini-link"
                 onClick={() => setExpanded(false)}
               >
                 Spot
@@ -47,7 +49,7 @@ const MiniHeader = ({ showBreadcrumb = true }) => {
               <Nav.Link
                 as={NavLink}
                 to="/Futures"
-                className="fw-medium nav-instant-green"
+                className="tx-mini-link"
                 onClick={() => setExpanded(false)}
               >
                 Futures
@@ -55,14 +57,13 @@ const MiniHeader = ({ showBreadcrumb = true }) => {
               <Nav.Link
                 as={NavLink}
                 to="/Support"
-                className="fw-medium nav-instant-green"
+                className="tx-mini-link"
                 onClick={() => setExpanded(false)}
               >
                 Support
               </Nav.Link>
             </Nav>
-            {/* Right side items */}
-            <Nav className="d-flex flex-column flex-lg-row gap-3">
+            <Nav className="d-flex flex-column flex-lg-row gap-2 gap-lg-3 tx-mini-actions">
               <LangCurrencyModal />
 
               <Button
@@ -70,32 +71,30 @@ const MiniHeader = ({ showBreadcrumb = true }) => {
                 size="md"
                 as={NavLink}
                 to="/login"
-                className="px-4 fw-medium"
+                className="tx-mini-login-btn"
                 onClick={() => setExpanded(false)}
               >
-                Login
+                Log in
               </Button>
             </Nav>
           </Navbar.Collapse>
         </Container>
       </Navbar>
       {showBreadcrumb && (
-        <div
-          className="bg-secondary border-top border-secondary py-2"
-          style={{}}
-        >
-          <Container fluid>
-            <Nav className="align-items-center gap-3">
+        <div className="tx-mini-breadcrumb">
+          <Container fluid="lg">
+            <Nav className="align-items-center">
               <Nav.Link
                 as={NavLink}
                 to="/Blogs"
-                className="fw-medium text-white text-decoration-none d-flex align-items-center gap-2"
+                className="tx-mini-breadcrumb-link"
                 onClick={() => setExpanded(false)}
               >
-                <i className="bi bi-chevron-left fs-5 text-white nav-instant-green"></i>
-                <span className="fw-bold fs-5 text-white nav-instant-green">
-                  Blogs
-                </span>
+                <i
+                  className="bi bi-chevron-left tx-mini-breadcrumb-icon"
+                  aria-hidden="true"
+                />
+                <span>Blogs</span>
               </Nav.Link>
             </Nav>
           </Container>

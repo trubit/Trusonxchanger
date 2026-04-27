@@ -8,12 +8,14 @@ import blogsRoutes from "./routes/blogs.js";
 import coinsRoutes from "./routes/coins.js";
 import kycRoutes from "./routes/kyc.js";
 import subscriptionsRoutes from "./routes/subscriptions.js";
+import newsletterRoutes from "./routes/newsletter.js";
 import supportRoutes from "./routes/support.js";
 import tradesRoutes from "./routes/trades.js";
 import transactionsRoutes from "./routes/transactions.js";
 import usersRoutes from "./routes/users.js";
 import walletsRoutes from "./routes/wallets.js";
 import trusonCoinsRoutes from "./routes/trusonCoins.js";
+import currencyRoutes from "./routes/currency.js";
 // Log critical configuration at startup for visibility.
 console.log(
   `SMTP configured: ${process.env.SMTP_HOST ? "yes" : "no"}; host=${process.env.SMTP_HOST || "unset"}`,
@@ -52,6 +54,8 @@ app.use("/api/kyc", kycRoutes);
 app.use("/api/transactions", transactionsRoutes);
 app.use("/api/blogs", blogsRoutes);
 app.use("/api/trusonCoins", trusonCoinsRoutes);
+app.use("/api/newsletter", newsletterRoutes);
+app.use("/api/currency", currencyRoutes);
 // Error handling middleware (should be last).
 app.use(notFound);
 app.use(errorHandler);

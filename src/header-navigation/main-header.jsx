@@ -12,31 +12,33 @@ const MainHeader = () => {
       expanded={expanded}
       onToggle={(nextExpanded) => setExpanded(nextExpanded)}
       collapseOnSelect
-      bg="dark"
       sticky="top"
       variant="dark"
       expand="lg"
-      className="py-3 shadow-sm nav-header"
-      style={{}}
+      className="tx-main-header"
     >
-      <Container fluid="lg">
+      <Container fluid="lg" className="tx-main-header-inner">
         <Navbar.Brand
           as={NavLink}
           to="/"
-          className="fs-3 fw-bold container-nav"
-          style={{}}
+          className="tx-main-brand"
         >
-          TrusonXchanger
+          <span className="tx-main-brand-mark" aria-hidden="true">
+            TX
+          </span>
+          <span className="tx-main-brand-text">TrusonXchanger</span>
         </Navbar.Brand>
 
-        {/* this is for hamburger button*/}
-        <Navbar.Toggle aria-controls="responsive-navbar-nav" />
+        <Navbar.Toggle
+          aria-controls="responsive-navbar-nav"
+          className="tx-main-toggler"
+        />
         <Navbar.Collapse id="responsive-navbar-nav">
-          <Nav className="me-auto mb-2 mb-lg-0">
+          <Nav className="me-auto mb-2 mb-lg-0 tx-main-nav">
             <Nav.Link
               as={NavLink}
               to="/"
-              className="fw-medium"
+              className="tx-main-link"
               onClick={() => setExpanded(false)}
             >
               Home
@@ -44,7 +46,7 @@ const MainHeader = () => {
             <Nav.Link
               as={NavLink}
               to="/arbitrage"
-              className="fw-medium"
+              className="tx-main-link"
               onClick={() => setExpanded(false)}
             >
               Arbitrage
@@ -52,7 +54,7 @@ const MainHeader = () => {
             <Nav.Link
               as={NavLink}
               to="/trade"
-              className="fw-medium"
+              className="tx-main-link"
               onClick={() => setExpanded(false)}
             >
               Trade
@@ -60,7 +62,7 @@ const MainHeader = () => {
             <Nav.Link
               as={NavLink}
               to="/subscription"
-              className="fw-medium"
+              className="tx-main-link"
               onClick={() => setExpanded(false)}
             >
               Subscription
@@ -68,20 +70,20 @@ const MainHeader = () => {
             <Nav.Link
               as={NavLink}
               to="/contact"
-              className="fw-medium"
+              className="tx-main-link"
               onClick={() => setExpanded(false)}
             >
               Contact
             </Nav.Link>
           </Nav>
-          <Nav className="d-flex flex-column flex-lg-row gap-3">
+          <Nav className="d-flex flex-column flex-lg-row gap-2 gap-lg-3 tx-main-actions">
             <LangCurrencyModal />
             <Button
               variant="outline-light"
               size="md"
               as={NavLink}
               to="/login"
-              className="px-4 fw-medium"
+              className="tx-main-login-btn"
               onClick={() => setExpanded(false)}
             >
               Log in
@@ -91,16 +93,15 @@ const MainHeader = () => {
               size="md"
               as={NavLink}
               to="/signup"
-              className="px-4 fw-medium button-nav"
-              style={{}}
+              className="tx-main-signup-btn"
               onClick={() => setExpanded(false)}
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
-                width="18"
-                height="18"
+                width="16"
+                height="16"
                 fill="currentColor"
-                className="bi bi-person"
+                className="bi bi-person tx-main-signup-icon"
                 viewBox="0 0 16 16"
               >
                 <path

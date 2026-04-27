@@ -1,4 +1,3 @@
-import React from "react";
 import { Container, Row, Col, Card } from "react-bootstrap";
 import "../styles/FeaturesSection.css";
 
@@ -11,10 +10,10 @@ import imgExecution from "../assets/bestExOrder1.webp";
 import imgWithdraw from "../assets/orderHistory.webp";
 
 const FeatureCard = ({ title, description, iconSrc, imageSrc }) => (
-  <Card className="tx-feature-card">
+  <Card className="tx-feature-card h-100">
     <Card.Body className="tx-feature-body">
       <div className="tx-feature-top">
-        <div className="tx-feature-title">{title}</div>
+        <h3 className="tx-feature-title">{title}</h3>
         <div className="tx-feature-iconWrap" aria-hidden="true">
           <img
             className="tx-feature-icon"
@@ -24,6 +23,7 @@ const FeatureCard = ({ title, description, iconSrc, imageSrc }) => (
           />
         </div>
       </div>
+      <span className="tx-feature-divider" aria-hidden="true" />
       <div className="tx-feature-desc">{description}</div>
       <div className="tx-feature-imageFrame" aria-hidden="true">
         <img
