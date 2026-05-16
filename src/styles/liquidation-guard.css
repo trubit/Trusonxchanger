@@ -1,0 +1,63 @@
+.lg-page {
+  background: #05090d;
+  min-height: 100vh;
+  padding: clamp(2rem, 4.5vw, 4rem) 0;
+}
+
+.lg-wrap {
+  max-width: 1080px;
+}
+
+.lg-card {
+  background: linear-gradient(180deg, rgba(10, 16, 22, 0.98), rgba(7, 12, 18, 0.99));
+  border: 1px solid rgba(132, 156, 173, 0.26);
+  border-radius: 24px;
+  color: #ebf2f7;
+  padding: clamp(1.4rem, 3vw, 2.4rem);
+}
+
+.lg-title {
+  color: #f7fbff;
+  margin: 0;
+  font-size: clamp(1.55rem, 2.6vw, 2.2rem);
+}
+
+.lg-subtitle,
+.lg-intro,
+.lg-section p,
+.lg-section li {
+  color: #b9c4cf;
+  line-height: 1.72;
+}
+
+.lg-section {
+  margin-top: 1.4rem;
+}
+
+.lg-section h2 {
+  color: #f7fbff;
+  margin-bottom: 0.6rem;
+  font-size: clamp(1.2rem, 1.7vw, 1.5rem);
+}
+
+.lg-table-wrap {
+  overflow-x: auto;
+}
+
+.lg-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 0.75rem;
+}
+
+.lg-table th,
+.lg-table td {
+  border: 1px solid rgba(132, 156, 173, 0.2);
+  padding: 0.7rem;
+}
+
+.lg-table th {
+  background: rgba(0, 214, 160, 0.12);
+  color: #f7fbff;
+}
+

@@ -1,52 +1,66 @@
 import Trade from "../models/Trade.js";
+import {
+  cancelUserOrder,
+  getPublicMarketState,
+  getTradingPairs,
+  getUserMarketState,
+  placeSpotOrder,
+} from "../services/tradeService.js";
 
-// List trades (admins can filter by userId).
+const emitTradeUpdate = async (req, symbol, event, data) => {
+  const publisher = req.app?.locals?.tradePublisher;
+  if (!publisher) return;
+  await publisher.publishOrderEvent(symbol, event, data);
+};
+
+// Public list of supported trading pairs + current ticker values.
+export const listPairs = async (_req, res) => {
+  const pairs = await getTradingPairs();
+  res.json({ pairs });
+};
+
+// Public market state (ticker + order book + market trades).
+export const getMarketState = async (req, res) => {
+  const symbol = req.query.symbol || "BTCUSDT";
+  const marketState = await getPublicMarketState(symbol);
+  res.json(marketState);
+};
+
+// Authenticated market state includes user wallets, open orders, and own trades.
+export const getMyMarketState = async (req, res) => {
+  const symbol = req.query.symbol || "BTCUSDT";
+  const marketState = await getUserMarketState(req.user.id, symbol);
+  res.json(marketState);
+};
+
+// Place a new spot order and attempt matching against the live order book.
+export const placeOrder = async (req, res) => {
+  const result = await placeSpotOrder(req.user.id, req.body);
+  await emitTradeUpdate(req, result.order.symbol, "order_update", {
+    order: result.order,
+    fills: result.fills,
+  });
+  res.status(201).json(result);
+};
+
+// Cancel one of the user's open orders.
+export const cancelOrder = async (req, res) => {
+  const result = await cancelUserOrder(req.user.id, req.params.id);
+  await emitTradeUpdate(req, result.order.symbol, "order_cancelled", {
+    order: result.order,
+  });
+  res.json(result);
+};
+
+// List authenticated trade history.
 export const listTrades = async (req, res) => {
-  const filter = {};
-  if (req.user?.role !== "admin") {
-    filter.user = req.user.id;
-  } else if (req.query.userId) {
-    filter.user = req.query.userId;
+  const filter = { user: req.user.id };
+  if (req.query.symbol) {
+    filter.symbol = String(req.query.symbol).toUpperCase();
   }
-
-  const trades = await Trade.find(filter).sort({ createdAt: -1 });
+  const trades = await Trade.find(filter)
+    .sort({ executedAt: -1, createdAt: -1 })
+    .limit(100);
   res.json({ trades });
 };
-
-// Fetch one trade by ID.
-export const getTrade = async (req, res) => {
-  const trade = await Trade.findById(req.params.id);
-  if (!trade) {
-    return res.status(404).json({ message: "Trade not found." });
-  }
-  return res.json({ trade });
-};
-
-// Create a trade for the logged-in user.
-export const createTrade = async (req, res) => {
-  const payload = { ...req.body, user: req.user.id };
-  const trade = await Trade.create(payload);
-  res.status(201).json({ trade });
-};
-
-// Update a trade by ID.
-export const updateTrade = async (req, res) => {
-  const trade = await Trade.findByIdAndUpdate(req.params.id, req.body, {
-    new: true,
-    runValidators: true,
-  });
-  if (!trade) {
-    return res.status(404).json({ message: "Trade not found." });
-  }
-  return res.json({ trade });
-};
-
-// Delete a trade by ID.
-export const deleteTrade = async (req, res) => {
-  const trade = await Trade.findByIdAndDelete(req.params.id);
-  if (!trade) {
-    return res.status(404).json({ message: "Trade not found." });
-  }
-  return res.json({ ok: true });
-}; 
 

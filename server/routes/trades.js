@@ -1,21 +1,28 @@
- import express from "express";
+import express from "express";
 import {
-  createTrade,
-  deleteTrade,
-  getTrade,
+  cancelOrder,
+  getMarketState,
+  getMyMarketState,
   listTrades,
-  updateTrade,
+  listPairs,
+  placeOrder,
 } from "../controllers/tradesController.js";
 import { requireAuth } from "../middleware/auth.js";
 
-// Trade routes (authenticated).
+// Trading routes: public market data + authenticated order actions.
 const router = express.Router();
 
-router.get("/", requireAuth, listTrades);
-router.post("/", requireAuth, createTrade);
-router.get("/:id", requireAuth, getTrade);
-router.put("/:id", requireAuth, updateTrade);
-router.delete("/:id", requireAuth, deleteTrade);
+router.get("/pairs", listPairs);
+router.get("/market-state", getMarketState);
+router.get("/my-market-state", requireAuth, getMyMarketState);
 
-export default router; 
+router.post("/orders", requireAuth, placeOrder);
+router.delete("/orders/:id", requireAuth, cancelOrder);
+// Backward-compatible aliases for older clients.
+router.post("/", requireAuth, placeOrder);
+router.delete("/:id", requireAuth, cancelOrder);
+
+router.get("/", requireAuth, listTrades);
+
+export default router;
 

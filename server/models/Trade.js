@@ -4,11 +4,16 @@ import mongoose from "mongoose";
 const TradeSchema = new mongoose.Schema(
   {
     user: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
+    order: { type: mongoose.Schema.Types.ObjectId, ref: "Order" },
     type: { type: String, enum: ["spot", "futures"], required: true },
     side: { type: String, enum: ["buy", "sell"], required: true },
     symbol: { type: String, required: true },
+    baseAsset: { type: String, default: "" },
+    quoteAsset: { type: String, default: "" },
+    orderType: { type: String, enum: ["market", "limit"], default: "limit" },
     amount: { type: Number, required: true },
     price: { type: Number, required: true },
+    quoteAmount: { type: Number, default: 0 },
     fee: { type: Number, default: 0 },
     pnl: { type: Number, default: 0 },
     status: {

@@ -1,10 +1,10 @@
 import { useState } from "react";
 import { Card, Form, Button, Alert, Spinner } from "react-bootstrap";
 import { Link } from "react-router-dom";
-import ToggleTheme from "../Components/toggleTheme";
-import AuthBranding from "../Components/authBranding";
+import ToggleTheme from "../Components/common/toggleTheme";
+import AuthBranding from "../Components/auth/authBranding";
 import "../styles/login.css";
-import { requestPasswordReset } from "../api/auth";
+import { requestPasswordReset } from "../services/api/auth";
 
 // Page where users request a reset link via email.
 const ForgotPassword = () => {

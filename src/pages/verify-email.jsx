@@ -1,10 +1,10 @@
 import { useMemo, useState } from "react";
 import { Card, Form, Button, Alert, Spinner } from "react-bootstrap";
 import { Link, useSearchParams } from "react-router-dom";
-import ToggleTheme from "../Components/toggleTheme";
-import AuthBranding from "../Components/authBranding";
+import ToggleTheme from "../Components/common/toggleTheme";
+import AuthBranding from "../Components/auth/authBranding";
 import "../styles/login.css";
-import { resendEmailVerification, verifyEmail } from "../api/auth";
+import { resendEmailVerification, verifyEmail } from "../services/api/auth";
 
 // Verify email page: accepts a 6-digit code and confirms the account.
 const VerifyEmail = () => {

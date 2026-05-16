@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import ToggleTheme from "../Components/toggleTheme";
+import ToggleTheme from "../Components/common/toggleTheme";
 import {
   Card,
   Form,
@@ -10,10 +10,10 @@ import {
 } from "react-bootstrap";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { Eye, EyeSlash } from "react-bootstrap-icons";
-import AuthBranding from "../Components/authBranding";
-import GoogleAuthButton from "../Components/GoogleAuthButton";
+import AuthBranding from "../Components/auth/authBranding";
+import GoogleAuthButton from "../Components/auth/GoogleAuthButton";
 import "../styles/login.css";
-import useLogin from "../hooksJavascript/useLogin";
+import useLogin from "../hooks/useLogin";
 
 const Login = () => {
   const navigate = useNavigate();

@@ -1,7 +1,7 @@
 import { Container, Row, Col } from "react-bootstrap";
-import NewsletterSection from "../Homepage/NewsletterSection";
-import NavigationSection from "../Components/NavigationSection";
-import BottomBar from "../Components/BottomBar";
+import NewsletterSection from "../Components/home/NewsletterSection";
+import NavigationSection from "../Components/layout/NavigationSection";
+import BottomBar from "../Components/layout/BottomBar";
 import "../styles/AntiBriberyPolicy.css";
 
 const AntiBriberyPolicy = () => {

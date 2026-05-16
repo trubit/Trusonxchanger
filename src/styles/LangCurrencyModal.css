@@ -1,17 +1,22 @@
 /* src/components/LangCurrencyModal.css */
 
-/* === Button (the EN/USD trigger) === */
-.rounded-pill.px-3.py-1.d-flex.align-items-center.gap-2.shadow-sm {
+/* === Button (language/currency trigger) === */
+.tx-lang-currency-btn {
   background: linear-gradient(135deg, #1e293b 0%, #111827 100%);
   border: 1px solid rgba(51, 65, 85, 0.6);
   color: #e2e8f0;
+  display: inline-flex;
   font-weight: 500;
+  justify-content: center;
   letter-spacing: 0.5px;
+  min-height: 40px;
+  min-width: 124px;
   transition: all 0.35s ease;
   box-shadow: 0 6px 20px rgba(0, 0, 0, 0.45);
 }
 
-.rounded-pill.px-3.py-1.d-flex.align-items-center.gap-2.shadow-sm:hover {
+.tx-lang-currency-btn:hover,
+.tx-lang-currency-btn:focus-visible {
   transform: translateY(-2px);
   box-shadow: 0 14px 32px rgba(0, 0, 0, 0.55);
   background: linear-gradient(135deg, #334155 0%, #1e293b 100%);

@@ -1,4 +1,5 @@
 import NewsletterSubscriber from "../models/NewsletterSubscriber.js";
+import { enqueueJob } from "../queues/index.js";
 
 // POST /api/newsletter/subscribe: subscribe a new email.
 export const subscribe = async (req, res) => {
@@ -29,6 +30,11 @@ export const subscribe = async (req, res) => {
 
     await NewsletterSubscriber.create({ email: cleaned });
     console.info(`[NEWSLETTER] New subscription: ${cleaned}`);
+    await enqueueJob("email", "newsletter-welcome", { email: cleaned }).catch(() => {});
+    await enqueueJob("audit", "newsletter-subscription", {
+      email: cleaned,
+      createdAt: new Date().toISOString(),
+    }).catch(() => {});
     
     return res.json({ success: true, message: "Subscription successful" });
   } catch (err) {

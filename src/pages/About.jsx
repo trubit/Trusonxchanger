@@ -1,11 +1,11 @@
 import { Col, Container, Row } from "react-bootstrap";
 import mainLogo from "../assets/mainLogo.png";
-import AboutHighlightSection from "../Components/AboutHighlightSection";
-import VisionMissionSection from "../components/VisionMissionSection";
-import CoreValues from "../components/CoreValues";
-import NewsletterSection from "../Homepage/NewsletterSection";
-import NavigationSection from "../Components/NavigationSection";
-import BottomBar from "../Components/BottomBar";
+import AboutHighlightSection from "../Components/common/AboutHighlightSection";
+import VisionMissionSection from "../Components/common/VisionMissionSection";
+import CoreValues from "../Components/common/CoreValues";
+import NewsletterSection from "../Components/home/NewsletterSection";
+import NavigationSection from "../Components/layout/NavigationSection";
+import BottomBar from "../Components/layout/BottomBar";
 import "../styles/about.css";
 
 const About = () => {

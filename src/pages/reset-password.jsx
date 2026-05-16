@@ -2,10 +2,10 @@ import { useEffect, useState } from "react";
 import { Card, Form, Button, Alert, Spinner, InputGroup } from "react-bootstrap";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { Eye, EyeSlash } from "react-bootstrap-icons";
-import ToggleTheme from "../Components/toggleTheme";
-import AuthBranding from "../Components/authBranding";
+import ToggleTheme from "../Components/common/toggleTheme";
+import AuthBranding from "../Components/auth/authBranding";
 import "../styles/login.css";
-import { resetPassword } from "../api/auth";
+import { resetPassword } from "../services/api/auth";
 
 const PASSWORD_PATTERN =
   /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$/;

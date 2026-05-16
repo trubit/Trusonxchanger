@@ -5,61 +5,27 @@
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>trusonxchanger</title>
-    <script src="https://accounts.google.com/gsi/client" async defer></script>
   </head>
   <body>
+    <noscript>
+      <section>
+        <h2>TrusonXchanger uses cookies</h2>
+        <p>
+          We and our partners use cookies (including essential, functional,
+          analytical, and tracking) to enhance your experience, analyse site
+          usage, and show you relevant content. By clicking &ldquo;Accept
+          All,&rdquo; you consent to our use of all cookies. You may also click
+          &ldquo;Manage Preferences&rdquo; to select which categories of cookies
+          you want to allow.
+        </p>
+        <p>
+          JavaScript is disabled, so only essential cookies are active.
+          <a href="/cookie-policy">Learn More</a>
+        </p>
+      </section>
+    </noscript>
     <div id="root"></div>
+    <div id="google_translate_element" hidden></div>
     <script type="module" src="/src/main.jsx"></script>
-
-    <!-- Google Translate Script for Automatic Translation -->
-    <script type="text/javascript">
-      (function () {
-        const host = window.location.hostname || "";
-        const isPrivateHost =
-          host === "localhost" ||
-          host === "127.0.0.1" ||
-          host === "0.0.0.0" ||
-          host.startsWith("10.") ||
-          host.startsWith("192.168.") ||
-          /^172\.(1[6-9]|2\d|3[0-1])\./.test(host);
-
-        if (isPrivateHost) {
-          return;
-        }
-
-        window.googleTranslateElementInit = function () {
-          new google.translate.TranslateElement(
-            {
-              pageLanguage: "en", // Default language = English
-              includedLanguages: "en,es,bn,fr,de,zh-CN", // Languages you support (add more codes)
-              autoDisplay: false, // Hide default Google bar
-            },
-            "google_translate_element",
-          );
-        };
-
-        const script = document.createElement("script");
-        script.type = "text/javascript";
-        script.src =
-          "https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit";
-        script.async = true;
-        script.defer = true;
-        document.head.appendChild(script);
-
-        // Force reset to English on page load once Translate is available
-        window.addEventListener("load", function () {
-          setTimeout(() => {
-            const select = document.querySelector(".goog-te-combo");
-            if (select) {
-              select.value = "en";
-              select.dispatchEvent(new Event("change"));
-            }
-          }, 1500); // Small delay to let Google load
-        });
-      })();
-    </script>
-
-    <!-- Hidden container -->
-    <div id="google_translate_element" style="display: none"></div>
   </body>
 </html>

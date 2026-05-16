@@ -1,0 +1,23 @@
+export const queryKeys = {
+  blogs: {
+    all: ["blogs"],
+    list: (params = {}) => ["blogs", "list", params],
+    detail: (id) => ["blogs", "detail", id],
+    related: (id) => ["blogs", "related", id],
+  },
+  market: {
+    mainCoin: ["market", "main-coin"],
+    globalStats: ["market", "global-stats"],
+    topCoins: ["market", "top-coins"],
+    trusonCoin: ["market", "truson-coin"],
+  },
+  currency: {
+    rates: (base = "USD") => ["currency", "rates", base],
+  },
+  trade: {
+    pairs: ["trade", "pairs"],
+    marketState: (symbol) => ["trade", "market-state", symbol],
+    myMarketState: (symbol) => ["trade", "my-market-state", symbol],
+  },
+};
+

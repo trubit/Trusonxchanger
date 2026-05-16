@@ -1,0 +1,159 @@
+/*
+  Premium Asset Listing Policy Page Styles for TrusonXchanger
+  ...existing code...
+*/
+
+.asset-list-policy-page {
+  background:
+    radial-gradient(
+      980px 620px at 8% -12%,
+      rgba(0, 214, 160, 0.16),
+      rgba(0, 214, 160, 0) 66%
+    ),
+    radial-gradient(
+      1020px 620px at 98% 8%,
+      rgba(66, 97, 116, 0.24),
+      rgba(66, 97, 116, 0) 72%
+    ),
+    #05090d;
+  min-height: 100vh;
+  padding: clamp(2rem, 4.9vw, 4rem) 0 clamp(2.4rem, 5.9vw, 5rem);
+}
+
+.asset-list-policy-wrap {
+  max-width: 1080px;
+  margin: 0 auto;
+}
+
+.asset-list-policy-card {
+  position: relative;
+  overflow: hidden;
+  background:
+    linear-gradient(165deg, rgba(255, 255, 255, 0.045), rgba(255, 255, 255, 0)),
+    linear-gradient(180deg, rgba(10, 16, 22, 0.975), rgba(7, 12, 18, 0.995));
+  border: 1px solid rgba(132, 156, 173, 0.26);
+  border-radius: 24px;
+  box-shadow:
+    0 30px 62px rgba(0, 0, 0, 0.44),
+    0 0 32px 0 rgba(0, 214, 160, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.055);
+  padding: clamp(1.55rem, 3.4vw, 2.55rem) clamp(1.15rem, 3vw, 2.15rem)
+    clamp(1.75rem, 3.8vw, 2.8rem);
+  color: #ebf2f7;
+}
+
+.asset-list-policy-card::before {
+  content: "";
+  position: absolute;
+  inset: 0 auto auto 0;
+  width: 100%;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    rgba(0, 214, 160, 0.45),
+    rgba(255, 255, 255, 0)
+  );
+  pointer-events: none;
+}
+
+.asset-list-policy-title {
+  margin: 0;
+  font-family: "Space Grotesk", "Manrope", sans-serif;
+  font-size: clamp(1.6rem, 2.7vw, 2.2rem);
+  font-weight: 700;
+  line-height: 1.2;
+  letter-spacing: -0.016em;
+  color: #f7fbff;
+}
+
+.asset-list-policy-subtitle {
+  margin: 1rem 0 0;
+  font-size: clamp(0.98rem, 1.02vw, 1.1rem);
+  line-height: 1.72;
+  color: #b9c4cf;
+  font-weight: 500;
+}
+
+.asset-list-policy-intro {
+  margin: 1.05rem 0 0;
+  font-size: clamp(0.98rem, 1.02vw, 1.1rem);
+  color: #b9c4cf;
+  line-height: 1.7;
+}
+
+.asset-section {
+  margin-top: 2.2rem;
+}
+
+.asset-section h2 {
+  margin: 0 0 0.85rem;
+  color: #f6fbff;
+  font-family: "Space Grotesk", "Manrope", sans-serif;
+  font-size: clamp(1.28rem, 1.58vw, 1.9rem);
+  font-weight: 700;
+  line-height: 1.23;
+}
+
+.asset-section h3 {
+  margin: 1.1rem 0 0.5rem;
+  color: #e2f7e6;
+  font-size: clamp(1.08rem, 1.2vw, 1.22rem);
+  font-weight: 600;
+}
+
+.asset-section p,
+.asset-section ul,
+.asset-section ol {
+  color: #b9c4cf;
+  font-size: clamp(0.98rem, 1.02vw, 1.1rem);
+  line-height: 1.7;
+  margin-bottom: 0.7rem;
+}
+
+.asset-section ul,
+.asset-section ol {
+  padding-left: 1.5rem;
+}
+
+.asset-table {
+  width: 100%;
+  margin: 1.5rem 0;
+  border-collapse: collapse;
+  background: rgba(10, 16, 22, 0.98);
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 2px 12px rgba(0, 214, 160, 0.07);
+}
+
+.asset-table th,
+.asset-table td {
+  padding: 0.95rem 1.1rem;
+  border-bottom: 1px solid rgba(132, 156, 173, 0.13);
+  text-align: left;
+}
+
+.asset-table th {
+  background: rgba(0, 214, 160, 0.13);
+  color: #f7fbff;
+  font-weight: 700;
+  font-size: 1.05rem;
+}
+
+.asset-table td {
+  color: #b9c4cf;
+  font-size: 0.99rem;
+}
+
+@media (max-width: 700px) {
+  .asset-list-policy-card {
+    padding: 1.1rem 0.5rem 1.5rem;
+  }
+  .asset-table th,
+  .asset-table td {
+    padding: 0.65rem 0.5rem;
+    font-size: 0.93rem;
+  }
+  .asset-list-policy-title {
+    font-size: 1.25rem;
+  }
+}

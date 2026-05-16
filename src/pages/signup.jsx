@@ -2,10 +2,10 @@ import { Link, useNavigate } from "react-router-dom";
 import { Form, Button, Alert, Spinner, InputGroup } from "react-bootstrap";
 import { Eye, EyeSlash } from "react-bootstrap-icons";
 import "../styles/signup.css";
-import useSignup from "../hooksJavascript/useSignup";
-import AuthBranding from "../Components/authBranding";
-import ToggleTheme from "../Components/toggleTheme";
-import GoogleAuthButton from "../Components/GoogleAuthButton";
+import useSignup from "../hooks/useSignup";
+import AuthBranding from "../Components/auth/authBranding";
+import ToggleTheme from "../Components/common/toggleTheme";
+import GoogleAuthButton from "../Components/auth/GoogleAuthButton";
 
 const Signup = () => {
   const navigate = useNavigate();
