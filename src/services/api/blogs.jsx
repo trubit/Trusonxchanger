@@ -1,4 +1,4 @@
-import { requestWithRetry } from "../../api/client";
+import { apiClientInstance, requestWithRetry } from "../../api/client";
 
 const request = (url, options = {}) =>
   requestWithRetry({
@@ -33,3 +33,10 @@ export const updateBlog = (id, payload) =>
 
 export const deleteBlog = (id) =>
   request(`/api/blogs/${id}`, { method: "DELETE" });
+
+export const uploadBlogImage = async (file) => {
+  const response = await apiClientInstance.postForm("/api/blogs/upload", {
+    image: file,
+  });
+  return response?.data || {};
+};

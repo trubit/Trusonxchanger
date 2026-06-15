@@ -1,4 +1,4 @@
-import { API_BASE_URL, httpClient, request } from "./httpClient";
+import { httpClient, request } from "./httpClient";
 import { coingeckoAxios } from "./api/axiosInstance";
 
 const COIN_IDS = [
@@ -193,8 +193,3 @@ export const fetchFallbackMarketSnapshot = async (symbol) => {
   return buildFallbackSnapshot(pairs, symbol);
 };
 
-export const getTradeWebSocketUrl = (symbol) => {
-  const parsed = new URL(API_BASE_URL);
-  const protocol = parsed.protocol === "https:" ? "wss:" : "ws:";
-  return `${protocol}//${parsed.host}/ws/trades?symbol=${encodeURIComponent(symbol)}`;
-};

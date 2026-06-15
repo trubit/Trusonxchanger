@@ -8,13 +8,18 @@ const HIDE_HEADER_ROUTES = [
   "/reset-password",
   "/terms",
   "/Dashboard",
-  "/trade",
   "/Blogs",
   "/blog",
   "/BlogUpdate",
-  "/Spot",
-  "/Futures",
   "/Support",
+  "/Dashboard/trade",
+  "/Dashboard/spot",
+  "/Dashboard/futures",
+  "/Dashboard/arbitrage",
+  "/Dashboard/subscription",
+  "/Dashboard/contact",
+  "/Dashboard/markets",
+  "/wallet",
 ];
 
 const MainLayout = ({ children }) => {

@@ -1,6 +1,8 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Spinner } from "react-bootstrap";
+import "../../styles/google-auth.css";
 import { googleAuth } from "../../services/api/auth";
+import { API_BASE_URL } from "../../api/client";
 
 const GOOGLE_GSI_SCRIPT_ID = "xch-google-identity-script";
 const GOOGLE_GSI_SCRIPT_SRC = "https://accounts.google.com/gsi/client";
@@ -58,7 +60,6 @@ const ensureGoogleIdentityScript = () => {
     script.onerror = () => reject(new Error("Failed to load Google script."));
     document.head.appendChild(script);
   }).catch((error) => {
-    // Allow retry when loading fails.
     googleScriptLoadPromise = null;
     throw error;
   });
@@ -73,32 +74,40 @@ const GoogleAuthButton = ({
   referralId = "",
   disabled = false,
 }) => {
-  // Reference to the div where Google renders its official button.
   const buttonRef = useRef(null);
-  // Avoid showing the missing-config message more than once.
   const warnedRef = useRef(false);
-  // Track when the Google Identity script has loaded.
-  const [isReady, setIsReady] = useState(false);
-  // Ensure Google Identity is initialized only once.
   const hasInitializedRef = useRef(false);
-  // Track when we are exchanging the token with our backend.
+  const renderProbeTimerRef = useRef(null);
+
+  const [isReady, setIsReady] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  // Track if we're on a narrow mobile screen (to shorten the Google button text).
   const [isNarrowScreen, setIsNarrowScreen] = useState(false);
-  // Friendly message when Google client ID is missing.
   const [configMessage, setConfigMessage] = useState("");
-  // Responsive width for the official Google button.
   const [buttonWidth, setButtonWidth] = useState(320);
-  // Frontend Google OAuth client ID (from .env).
+  const [forceRedirectFlow, setForceRedirectFlow] = useState(true);
+
   const clientId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
   const hasValidClientId =
     typeof clientId === "string" &&
     clientId.trim().endsWith(".apps.googleusercontent.com");
 
-  // Called by Google after the user approves the popup.
+  const startGoogleRedirect = useCallback(() => {
+    const params = new URLSearchParams({
+      mode: action === "signup" ? "signup" : "signin",
+      frontendUrl: window.location.origin,
+    });
+
+    if (action === "signup" && referralId.trim()) {
+      params.set("referralId", referralId.trim());
+    }
+
+    window.location.assign(
+      `${API_BASE_URL}/api/auth/google/start?${params.toString()}`,
+    );
+  }, [action, referralId]);
+
   const handleCredentialResponse = useCallback(
     async (response) => {
-      // Google did not return a credential (user closed popup).
       if (!response?.credential) {
         onError?.("Google sign-in was cancelled. Please try again.");
         return;
@@ -106,17 +115,18 @@ const GoogleAuthButton = ({
 
       setIsLoading(true);
       try {
-        // Send the Google ID token to our backend for verification.
         const extraPayload =
           referralId && action === "signup"
             ? { referralId: referralId.trim() }
             : {};
         const payload = await googleAuth(response.credential, extraPayload);
-        // Persist session so the app stays logged in on refresh (sign-in only).
+
         if (action !== "signup") {
           localStorage.setItem("token", payload.token);
           localStorage.setItem("user", JSON.stringify(payload.user));
         }
+
+        setConfigMessage("");
         onSuccess?.(payload);
       } catch (err) {
         onError?.(err.message || "Google authentication failed.");
@@ -127,16 +137,20 @@ const GoogleAuthButton = ({
     [action, onError, onSuccess, referralId],
   );
 
-  // Wait for the Google Identity script to load.
   useEffect(() => {
-    // If client ID is missing, show a helpful message.
+    if (forceRedirectFlow) {
+      setConfigMessage("");
+      return;
+    }
+
     if (!clientId || !hasValidClientId) {
       if (!warnedRef.current) {
         setConfigMessage(
-          "Missing or invalid Google client ID. Add a valid VITE_GOOGLE_CLIENT_ID to your root .env file.",
+          "Google popup is unavailable. Continuing with secure Google redirect flow.",
         );
         warnedRef.current = true;
       }
+      setForceRedirectFlow(true);
       return;
     }
 
@@ -147,18 +161,11 @@ const GoogleAuthButton = ({
       if (isCancelled) {
         return;
       }
-      if (window.google?.accounts?.id) {
-        setIsReady(true);
-      } else {
-        setIsReady(false);
-      }
+      setIsReady(Boolean(window.google?.accounts?.id));
     };
 
-    // Load Google Identity script if it's not already present.
     ensureGoogleIdentityScript()
-      .then(() => {
-        syncGoogleReady();
-      })
+      .then(syncGoogleReady)
       .catch(() => {
         if (!isCancelled) {
           setConfigMessage(
@@ -167,16 +174,14 @@ const GoogleAuthButton = ({
         }
       });
 
-    // Keep checking in case script is delayed.
     const interval = setInterval(syncGoogleReady, 250);
 
     return () => {
       isCancelled = true;
       clearInterval(interval);
     };
-  }, [clientId, hasValidClientId]);
+  }, [clientId, forceRedirectFlow, hasValidClientId]);
 
-  // Watch small-screen breakpoint so we can shorten the official button text.
   useEffect(() => {
     if (typeof window === "undefined" || !window.matchMedia) {
       return;
@@ -186,6 +191,7 @@ const GoogleAuthButton = ({
     const updateMatch = () => setIsNarrowScreen(mediaQuery.matches);
 
     updateMatch();
+
     if (mediaQuery.addEventListener) {
       mediaQuery.addEventListener("change", updateMatch);
       return () => mediaQuery.removeEventListener("change", updateMatch);
@@ -195,7 +201,6 @@ const GoogleAuthButton = ({
     return () => mediaQuery.removeListener(updateMatch);
   }, []);
 
-  // Keep the Google button width in sync with container size.
   useEffect(() => {
     if (!buttonRef.current) {
       return;
@@ -205,8 +210,7 @@ const GoogleAuthButton = ({
       const width = buttonRef.current?.clientWidth || 0;
       if (width > 0) {
         const maxWidth = isNarrowScreen ? 300 : 360;
-        const clamped = Math.min(maxWidth, width);
-        setButtonWidth(clamped);
+        setButtonWidth(Math.min(maxWidth, width));
       }
     };
 
@@ -222,7 +226,6 @@ const GoogleAuthButton = ({
     return () => observer.disconnect();
   }, [isNarrowScreen]);
 
-  // Initialize and render the official Google button.
   useEffect(() => {
     if (
       !isReady ||
@@ -235,18 +238,26 @@ const GoogleAuthButton = ({
       return;
     }
 
-    // Initialize Google Identity Services only once.
     if (!hasInitializedRef.current) {
       window.google.accounts.id.initialize({
         client_id: clientId,
         callback: handleCredentialResponse,
         ux_mode: "popup",
+        error_callback: () => {
+          setForceRedirectFlow(true);
+          setConfigMessage(
+            "Google popup sign-in is unavailable on this origin. Continue with Google redirect flow.",
+          );
+          onError?.(
+            "Google sign-in is unavailable for this app origin. Add this URL to Authorized JavaScript origins in Google Cloud console.",
+          );
+        },
       });
       hasInitializedRef.current = true;
     }
 
+    setConfigMessage("");
     buttonRef.current.innerHTML = "";
-    // Render the Google button into our div.
     window.google.accounts.id.renderButton(buttonRef.current, {
       theme: "outline",
       size: "large",
@@ -261,15 +272,38 @@ const GoogleAuthButton = ({
             ? "signin"
             : "signin_with",
     });
+
+    if (renderProbeTimerRef.current) {
+      window.clearTimeout(renderProbeTimerRef.current);
+    }
+
+    renderProbeTimerRef.current = window.setTimeout(() => {
+      const hasIframe = Boolean(buttonRef.current?.querySelector("iframe"));
+      if (!hasIframe) {
+        setForceRedirectFlow(true);
+        setConfigMessage(
+          "Google popup failed to initialise on this origin. Continue with Google redirect flow.",
+        );
+      }
+    }, 900);
+
+    return () => {
+      if (renderProbeTimerRef.current) {
+        window.clearTimeout(renderProbeTimerRef.current);
+        renderProbeTimerRef.current = null;
+      }
+    };
   }, [
     action,
     buttonWidth,
     clientId,
     disabled,
     handleCredentialResponse,
-    isNarrowScreen,
+    hasValidClientId,
     isLoading,
+    isNarrowScreen,
     isReady,
+    onError,
   ]);
 
   return (
@@ -279,8 +313,7 @@ const GoogleAuthButton = ({
     >
       <div
         className="google-auth-card"
-        role="button"
-        tabIndex={0}
+        role="group"
         aria-label={action === "signup" ? "Sign up with Google" : "Sign in with Google"}
       >
         <div className="google-auth-card-header">
@@ -289,37 +322,37 @@ const GoogleAuthButton = ({
             {action === "signup" ? "Create account with Google" : "Continue with Google"}
           </span>
         </div>
-        {clientId && isReady && hasValidClientId ? (
-          // Real Google button (renders inside this div).
+
+        {clientId && isReady && hasValidClientId && !forceRedirectFlow ? (
           <div
             className="google-button-shell"
             ref={buttonRef}
             aria-label={action === "signup" ? "Sign up with Google" : "Sign in with Google"}
           />
         ) : (
-          // Fallback button shown while Google script loads or when missing config.
           <button
             className="google-auth-button"
             type="button"
-            disabled
-            aria-disabled="true"
+            onClick={startGoogleRedirect}
+            disabled={disabled || isLoading}
+            aria-disabled={disabled || isLoading}
             aria-label={action === "signup" ? "Sign up with Google" : "Sign in with Google"}
           >
             <span className="google-auth-icon">G</span>
-            {action === "signup" ? "Sign up with Google" : "Sign in with Google"}
+            Continue with Google
           </button>
         )}
       </div>
+
       {isLoading && (
         <div className="google-auth-loading small text-muted">
           <Spinner animation="border" size="sm" className="me-2" />
           Connecting to Google...
         </div>
       )}
+
       {configMessage && (
-        <div className="google-auth-fallback small text-muted">
-          {configMessage}
-        </div>
+        <div className="google-auth-fallback small text-muted">{configMessage}</div>
       )}
     </div>
   );

@@ -2,6 +2,7 @@ import express from "express";
 import {
   googleAuth,
   googleOAuthCallback,
+  googleOAuthStart,
   login,
   me,
   register,
@@ -25,6 +26,7 @@ const router = express.Router();
 router.post("/register", registerLimiter, register);
 router.post("/login", loginLimiter, login);
 router.post("/google", loginLimiter, googleAuth);
+router.get("/google/start", googleOAuthStart);
 router.get("/google", googleOAuthCallback);
 router.post(
   "/verify-email/resend",

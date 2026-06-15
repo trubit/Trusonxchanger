@@ -1,138 +1,120 @@
-import { WebSocketServer } from "ws";
+import jwt from "jsonwebtoken";
+import { Server } from "socket.io";
 import { getPublicMarketState, jitterTickerPrices } from "../services/tradeService.js";
+import { setWalletIo } from "./walletEvents.js";
+import { setOrderIo } from "./orderEvents.js";
+import { setMEIo } from "./meEvents.js";
+import { setMarketDataIo } from "./marketDataEvents.js";
 
-const subscribersBySymbol = new Map();
-const HEARTBEAT_INTERVAL_MS = 15_000;
-const STALE_CONNECTION_MS = 45_000;
+const TICKER_INTERVAL_MS = 5_000;
 
-const parseSymbolFromUrl = (url = "") => {
-  try {
-    const parsed = new URL(url, "http://localhost");
-    return String(parsed.searchParams.get("symbol") || "BTCUSDT").toUpperCase();
-  } catch {
-    return "BTCUSDT";
-  }
-};
+export const setupTradeSocketServer = (httpServer, { cors } = {}) => {
+  const io = new Server(httpServer, {
+    cors: cors || { origin: "*" },
+    transports: ["websocket", "polling"],
+  });
 
-const sendJson = (socket, payload) => {
-  if (socket.readyState !== socket.OPEN) return;
-  socket.send(JSON.stringify(payload));
-};
+  // Wire singleton io references for all event emitters.
+  setWalletIo(io);
+  setOrderIo(io);
+  setMEIo(io);
+  setMarketDataIo(io);
 
-const joinSymbol = (socket, symbol) => {
-  const currentSymbol = socket.__tradeSymbol;
-  if (currentSymbol && subscribersBySymbol.has(currentSymbol)) {
-    subscribersBySymbol.get(currentSymbol).delete(socket);
-  }
+  io.on("connection", (socket) => {
+    // ── Market data subscriptions ──────────────────────────────────────────
+    socket.on("subscribe", async (data) => {
+      const symbol = String(data?.symbol || "BTCUSDT").toUpperCase();
 
-  socket.__tradeSymbol = symbol;
-  if (!subscribersBySymbol.has(symbol)) {
-    subscribersBySymbol.set(symbol, new Set());
-  }
-  subscribersBySymbol.get(symbol).add(socket);
-  socket.__lastSeenAt = Date.now();
-};
+      // Leave previous symbol rooms (keep wallet/order rooms intact).
+      for (const room of socket.rooms) {
+        if (room !== socket.id &&
+            !room.startsWith("wallet:") &&
+            !room.startsWith("orders:")) {
+          socket.leave(room);
+        }
+      }
 
-const publish = (symbol, payload) => {
-  const subscribers = subscribersBySymbol.get(symbol);
-  if (!subscribers || subscribers.size === 0) return;
-  for (const socket of subscribers) {
-    sendJson(socket, payload);
-  }
-};
+      socket.join(symbol);
+      socket.data.symbol = symbol;
 
-const publishSnapshot = async (socket, symbol) => {
-  try {
-    const state = await getPublicMarketState(symbol);
-    sendJson(socket, { type: "snapshot", data: state });
-  } catch (error) {
-    sendJson(socket, { type: "error", message: error.message || "Snapshot failed." });
-  }
-};
-
-export const setupTradeSocketServer = (httpServer) => {
-  const wss = new WebSocketServer({ server: httpServer, path: "/ws/trades" });
-
-  wss.on("connection", (socket, request) => {
-    const symbol = parseSymbolFromUrl(request.url);
-    joinSymbol(socket, symbol);
-    publishSnapshot(socket, symbol);
-
-    socket.on("message", async (raw) => {
       try {
-        const payload = JSON.parse(String(raw));
-        socket.__lastSeenAt = Date.now();
-        if (payload?.type === "ping") {
-          sendJson(socket, { type: "pong", ts: Date.now() });
-          return;
-        }
-        if (payload?.type === "subscribe" && payload?.symbol) {
-          const nextSymbol = String(payload.symbol).toUpperCase();
-          joinSymbol(socket, nextSymbol);
-          await publishSnapshot(socket, nextSymbol);
-        }
-      } catch {
-        // Ignore malformed payloads.
+        const state = await getPublicMarketState(symbol);
+        socket.emit("snapshot", state);
+      } catch (err) {
+        socket.emit("tradeError", { message: err.message || "Snapshot failed." });
       }
     });
 
-    socket.on("close", () => {
-      const subscribed = socket.__tradeSymbol;
-      if (!subscribed) return;
-      subscribersBySymbol.get(subscribed)?.delete(socket);
+    // ── Wallet room (Stage 2) ──────────────────────────────────────────────
+    socket.on("join_wallet", ({ token } = {}) => {
+      try {
+        if (!token) return;
+        const payload = jwt.verify(token, process.env.JWT_SECRET);
+        if (payload?.sub) socket.join(`wallet:${payload.sub}`);
+      } catch {
+        // Invalid or expired token — silently ignore.
+      }
+    });
+
+    // ── Order room (Stage 3) ──────────────────────────────────────────────
+    socket.on("join_orders", ({ token } = {}) => {
+      try {
+        if (!token) return;
+        const payload = jwt.verify(token, process.env.JWT_SECRET);
+        if (payload?.sub) socket.join(`orders:${payload.sub}`);
+      } catch {
+        // Invalid or expired token — silently ignore.
+      }
+    });
+
+    // ── Market data room (Stage 5) — receives all-pair ticker updates ─────
+    socket.on("join_market_updates", () => {
+      socket.join("market-updates");
+    });
+
+    // ── Candle stream room (Stage 5) — receives candle updates for one pair/interval
+    socket.on("subscribe_candles", ({ symbol, interval } = {}) => {
+      if (!symbol || !interval) return;
+      const sym = String(symbol).toUpperCase();
+      socket.join(`${sym}:candles:${interval}`);
     });
   });
 
-  const interval = setInterval(async () => {
+  // ── Market ticker broadcast ────────────────────────────────────────────
+  const tickerInterval = setInterval(async () => {
     jitterTickerPrices();
 
-    const symbols = [...subscribersBySymbol.keys()];
-    await Promise.all(
-      symbols.map(async (symbol) => {
-        const subscribers = subscribersBySymbol.get(symbol);
-        if (!subscribers || subscribers.size === 0) return;
-        const state = await getPublicMarketState(symbol);
-        publish(symbol, {
-          type: "ticker",
-          data: state.ticker,
-        });
-      }),
-    );
-  }, 5000);
+    const rooms = io.sockets.adapter.rooms;
+    for (const [room] of rooms) {
+      if (io.sockets.sockets.has(room)) continue;
+      if (room.startsWith("wallet:")) continue;
+      if (room.startsWith("orders:")) continue;
 
-  const heartbeat = setInterval(() => {
-    const now = Date.now();
-    for (const subscribers of subscribersBySymbol.values()) {
-      for (const socket of subscribers) {
-        const idleMs = now - Number(socket.__lastSeenAt || 0);
-        if (idleMs > STALE_CONNECTION_MS) {
-          try {
-            socket.terminate();
-          } catch {
-            // Ignore stale socket terminate errors.
-          }
-          subscribers.delete(socket);
-          continue;
-        }
-        sendJson(socket, { type: "ping", ts: now });
+      try {
+        const state = await getPublicMarketState(room);
+        io.to(room).emit("ticker", state.ticker);
+      } catch {
+        // Ignore per-symbol ticker errors.
       }
     }
-  }, HEARTBEAT_INTERVAL_MS);
+  }, TICKER_INTERVAL_MS);
 
-  wss.on("close", () => {
-    clearInterval(interval);
-    clearInterval(heartbeat);
-  });
+  httpServer.on("close", () => clearInterval(tickerInterval));
 
   return {
     publishSnapshotToSymbol: async (symbol) => {
-      const marketState = await getPublicMarketState(symbol);
-      publish(symbol, { type: "snapshot", data: marketState });
+      try {
+        const state = await getPublicMarketState(symbol);
+        io.to(symbol).emit("snapshot", state);
+      } catch {}
     },
     publishOrderEvent: async (symbol, event, data) => {
-      const marketState = await getPublicMarketState(symbol);
-      publish(symbol, { type: event, data });
-      publish(symbol, { type: "snapshot", data: marketState });
+      try {
+        const state = await getPublicMarketState(symbol);
+        io.to(symbol).emit(event, data);
+        io.to(symbol).emit("snapshot", state);
+      } catch {}
     },
   };
 };
+

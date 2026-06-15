@@ -9,6 +9,11 @@ import App from "./App.jsx";
 
 import "bootstrap/dist/css/bootstrap.min.css";
 
+window.addEventListener("vite:preloadError", (event) => {
+  event.preventDefault();
+  window.location.reload();
+});
+
 createRoot(document.getElementById("root")).render(
   <StrictMode>
     <QueryProvider>

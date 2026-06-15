@@ -1,17 +1,7 @@
 import Order from "../models/Order.js";
 import Trade from "../models/Trade.js";
 import Wallet from "../models/Wallet.js";
-
-const PAIRS = [
-  { symbol: "BTCUSDT", baseAsset: "BTC", quoteAsset: "USDT", price: 80350 },
-  { symbol: "ETHUSDT", baseAsset: "ETH", quoteAsset: "USDT", price: 2315 },
-  { symbol: "BNBUSDT", baseAsset: "BNB", quoteAsset: "USDT", price: 645 },
-  { symbol: "SOLUSDT", baseAsset: "SOL", quoteAsset: "USDT", price: 173.2 },
-  { symbol: "XRPUSDT", baseAsset: "XRP", quoteAsset: "USDT", price: 0.61 },
-  { symbol: "ADAUSDT", baseAsset: "ADA", quoteAsset: "USDT", price: 0.47 },
-  { symbol: "DOGEUSDT", baseAsset: "DOGE", quoteAsset: "USDT", price: 0.17 },
-  { symbol: "LINKUSDT", baseAsset: "LINK", quoteAsset: "USDT", price: 10.2 },
-];
+import { PAIRS } from "../config/supportedAssets.js";
 
 const marketStats = new Map(
   PAIRS.map((pair) => [

@@ -7,6 +7,9 @@ const request = (url, options = {}) =>
     data: options.body,
     headers: options.headers,
     signal: options.signal,
+  }, {
+    retries: options.retries,
+    dedupe: options.dedupe,
   });
 
 // Create a new account.
@@ -14,6 +17,7 @@ export const registerUser = (body) =>
   request("/api/auth/register", {
     method: "POST",
     body,
+    retries: 0,
   });
 
 // Log in with email + password.
@@ -21,6 +25,7 @@ export const loginUser = (body) =>
   request("/api/auth/login", {
     method: "POST",
     body,
+    retries: 0,
   });
 
 // Log in or sign up with Google (ID token).
@@ -34,7 +39,11 @@ export const googleAuth = (credential, extra = {}) =>
 export const requestPasswordReset = (email) =>
   request("/api/auth/forgot-password", {
     method: "POST",
-    body: { email },
+    body: {
+      email,
+      frontendUrl:
+        typeof window !== "undefined" ? window.location.origin : undefined,
+    },
   });
 
 // Send the token + new password to finish the reset.

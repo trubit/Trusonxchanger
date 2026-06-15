@@ -60,9 +60,13 @@ const createLimiter = (options) =>
     windowMs: options.windowMs,
     max: options.max,
     message: { message: options.message },
+    skipSuccessfulRequests: Boolean(options.skipSuccessfulRequests),
+    keyGenerator: options.keyGenerator,
     standardHeaders: true,
     legacyHeaders: false,
   });
+
+const passthroughLimiter = (_req, _res, next) => next();
 
 // NOTE: Limit login attempts per window to reduce brute-force attacks.
 export const loginLimiter = createLimiter({
@@ -72,11 +76,28 @@ export const loginLimiter = createLimiter({
 });
 
 // NOTE: Limit signup attempts per window to reduce spam accounts.
-export const registerLimiter = createLimiter({
-  windowMs: 5 * 60 * 1000,
-  max: 3,
+const registerLimiterBase = createLimiter({
+  windowMs: Number(process.env.REGISTER_RATE_LIMIT_WINDOW_MS || 2 * 60 * 1000),
+  max: Number(process.env.REGISTER_RATE_LIMIT_MAX || 10),
+  skipSuccessfulRequests: true,
+  keyGenerator: (req) => {
+    const email = normalizeEmail(req.body?.email);
+    return `${req.ip}:${email}`;
+  },
   message: "Too many signup attempts; please wait and try again.",
 });
+
+export const registerLimiter = (req, res, next) => {
+  const disabledByEnv =
+    String(process.env.DISABLE_REGISTER_RATE_LIMIT || "").toLowerCase() ===
+    "true";
+  const isNonProd = process.env.NODE_ENV !== "production";
+
+  if (disabledByEnv || isNonProd) {
+    return passthroughLimiter(req, res, next);
+  }
+  return registerLimiterBase(req, res, next);
+};
 
 // NOTE: Limit how often reset links can be requested.
 export const forgotPasswordLimiter = createLimiter({

@@ -9,6 +9,7 @@ import { clearAuthAnomaly, logAuthAnomaly } from "../middleware/security.js";
 // Password rule: minimum 8 characters with upper, lower, number, and symbol.
 const PASSWORD_POLICY =
   /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$/;
+const PHONE_POLICY = /^\+?[0-9()\-\s]{7,20}$/;
 // How many rounds to use when hashing passwords.
 const HASH_ROUNDS = 12;
 // Reset links expire after 1 hour for safety.
@@ -17,6 +18,10 @@ const RESET_TOKEN_TTL_MS = 1000 * 60 * 60;
 const EMAIL_VERIFY_CODE_TTL_MS = 1000 * 60 * 10;
 // Frontend base URL used in reset-password links.
 const FRONTEND_URL = process.env.FRONTEND_URL || "http://localhost:5173";
+// Public frontend URL to force for production emails/redirects (recommended).
+const PUBLIC_FRONTEND_URL = process.env.PUBLIC_FRONTEND_URL || "";
+// Allowed frontend origins (comma-separated), shared with CORS config.
+const CORS_ORIGIN = process.env.CORS_ORIGIN || "";
 // Google OAuth client ID (must match the one used on the frontend).
 const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID || "";
 // Google OAuth client secret + redirect URI (required for auth-code callback flow).
@@ -33,14 +38,120 @@ const googleOAuthClient =
         GOOGLE_REDIRECT_URI || undefined,
       )
     : null;
+
+const encodeGoogleState = (value) =>
+  Buffer.from(JSON.stringify(value), "utf8").toString("base64url");
+
+const decodeGoogleState = (value) => {
+  try {
+    if (!value || typeof value !== "string") {
+      return {};
+    }
+    const parsed = JSON.parse(
+      Buffer.from(value, "base64url").toString("utf8"),
+    );
+    return typeof parsed === "object" && parsed ? parsed : {};
+  } catch {
+    return {};
+  }
+};
+
+const parseUrl = (value) => {
+  try {
+    return new URL(value);
+  } catch {
+    return null;
+  }
+};
+
+const parseOrigins = (value) => {
+  if (!value || value === "*") {
+    return [];
+  }
+
+  return String(value)
+    .split(",")
+    .map((origin) => origin.trim())
+    .filter(Boolean)
+    .map((origin) => parseUrl(origin)?.origin)
+    .filter(Boolean);
+};
+
+const configuredFrontendOrigins = new Set(
+  [
+    parseUrl(FRONTEND_URL)?.origin,
+    parseUrl(PUBLIC_FRONTEND_URL)?.origin,
+    ...parseOrigins(CORS_ORIGIN),
+  ].filter(Boolean),
+);
+
+const isSafeFrontendUrl = (value) => {
+  const parsed = parseUrl(value);
+  if (!parsed) {
+    return false;
+  }
+
+  if (parsed.protocol !== "http:" && parsed.protocol !== "https:") {
+    return false;
+  }
+
+  return configuredFrontendOrigins.has(parsed.origin);
+};
+
+const isLocalHostName = (hostname = "") =>
+  hostname === "localhost" || hostname === "127.0.0.1";
+
+const isPrivateHostName = (hostname = "") =>
+  isLocalHostName(hostname) ||
+  hostname.startsWith("10.") ||
+  hostname.startsWith("192.168.") ||
+  /^172\.(1[6-9]|2\d|3[0-1])\./.test(hostname);
+
+const resolveFrontendUrl = (...candidates) => {
+  // If PUBLIC_FRONTEND_URL is configured, always prefer it for multi-device compatibility.
+  const publicUrl = parseUrl(PUBLIC_FRONTEND_URL);
+  if (publicUrl && !isPrivateHostName(publicUrl.hostname)) {
+    return PUBLIC_FRONTEND_URL;
+  }
+
+  // If FRONTEND_URL itself is public, use it as canonical fallback.
+  const envUrl = parseUrl(FRONTEND_URL);
+  if (envUrl && !isPrivateHostName(envUrl.hostname)) {
+    return FRONTEND_URL;
+  }
+
+  for (const candidate of candidates) {
+    if (typeof candidate === "string" && isSafeFrontendUrl(candidate)) {
+      return candidate;
+    }
+  }
+  return FRONTEND_URL;
+};
+
+const toShortText = (value, max = 140) =>
+  String(value || "")
+    .replace(/\s+/g, " ")
+    .trim()
+    .slice(0, max);
+
+const buildGoogleErrorRedirect = (frontendUrl, reason, description = "") => {
+  const params = new URLSearchParams({ error: "google_failed" });
+  if (reason) {
+    params.set("reason", toShortText(reason, 80));
+  }
+  if (description) {
+    params.set("desc", toShortText(description, 180));
+  }
+  return `${frontendUrl}/login?${params.toString()}`;
+};
 // Remove sensitive fields before sending user data to the client.
 const toSafeUser = (user) => (user ? user.toJSON() : null);
 // Normalize inputs to avoid case and whitespace issues.
 const normalizeEmail = (value) => value?.toLowerCase().trim();
 const normalizeText = (value) => value?.trim() ?? "";
 // Build reset link for the frontend reset-password page.
-const buildResetUrl = (token) =>
-  `${FRONTEND_URL}/reset-password?token=${encodeURIComponent(token)}`;
+const buildResetUrl = (token, frontendUrl = FRONTEND_URL) =>
+  `${frontendUrl}/reset-password?token=${encodeURIComponent(token)}`;
 // Create a reset token and store only its hash in the database.
 const createResetToken = () => {
   const token = crypto.randomBytes(32).toString("hex");
@@ -58,8 +169,8 @@ const createEmailVerifyCode = () => {
 };
 
 // Send a reset link email (HTML + plain text).
-const sendPasswordResetEmail = async (user, token) => {
-  const resetUrl = buildResetUrl(token);
+const sendPasswordResetEmail = async (user, token, frontendUrl = FRONTEND_URL) => {
+  const resetUrl = buildResetUrl(token, frontendUrl);
   const subject = "Reset your TrusonXchanger password";
   const text = [
     "You requested a password reset for your TrusonXchanger account.",
@@ -112,10 +223,12 @@ const sendEmailVerificationEmail = async (user, code) => {
 // Signup: validate input, hash password, create user, return safe profile.
 export const register = async (req, res) => {
   // Read submitted fields.
-  const { name, email, password, referralId } = req.body;
-  // Require email + password.
-  if (!email || !password) {
-    return res.status(400).json({ message: "Email and password are required." });
+  const { name, email, phone, password, referralId } = req.body;
+  // Require email + phone + password.
+  if (!email || !phone || !password) {
+    return res.status(400).json({
+      message: "Email, phone number, and password are required.",
+    });
   }
 
   // Enforce password strength.
@@ -129,7 +242,12 @@ export const register = async (req, res) => {
   // Normalize inputs.
   const normalizedEmail = normalizeEmail(email);
   const cleanedName = normalizeText(name);
+  const cleanedPhone = normalizeText(phone);
   const cleanedReferral = normalizeText(referralId);
+
+  if (!PHONE_POLICY.test(cleanedPhone)) {
+    return res.status(400).json({ message: "Enter a valid phone number." });
+  }
 
   // Ensure email is not already registered.
   const existing = await User.exists({ email: normalizedEmail });
@@ -147,6 +265,7 @@ export const register = async (req, res) => {
   const user = await User.create({
     name: cleanedName,
     email: normalizedEmail,
+    phone: cleanedPhone,
     passwordHash,
     referralId: cleanedReferral,
     authProvider: "local",
@@ -155,11 +274,9 @@ export const register = async (req, res) => {
     emailVerifyCodeExpires: expires,
   });
 
-  try {
-    await sendEmailVerificationEmail(user, code);
-  } catch (error) {
+  void sendEmailVerificationEmail(user, code).catch((error) => {
     console.error("Email verification send failed:", error?.message || error);
-  }
+  });
 
   // Return a safe version of the user (no password).
   return res.status(201).json({
@@ -210,12 +327,13 @@ export const resendEmailVerification = async (req, res) => {
   user.emailVerifyCodeExpires = expires;
   await user.save();
 
-  try {
-    await sendEmailVerificationEmail(user, code);
-    clearAuthAnomaly(req);
-  } catch (error) {
-    console.error("Email verification resend failed:", error?.message || error);
-  }
+  void sendEmailVerificationEmail(user, code)
+    .then(() => {
+      clearAuthAnomaly(req);
+    })
+    .catch((error) => {
+      console.error("Email verification resend failed:", error?.message || error);
+    });
 
   return res.json({
       message:
@@ -308,26 +426,135 @@ export const googleAuth = async (req, res) => {
     // Token verification failed.
     console.error("Google auth failed:", error?.message || error);
     logAuthAnomaly(req, "google-verify-failed");
+    const rawMessage = String(error?.message || "").toLowerCase();
+    const hasAudienceIssue =
+      rawMessage.includes("audience") ||
+      rawMessage.includes("recipient") ||
+      rawMessage.includes("client id");
+
+    if (hasAudienceIssue) {
+      return res.status(401).json({
+        message:
+          "Google client mismatch detected. Ensure your frontend and backend Google client IDs match and add this app URL to Authorized JavaScript origins in Google Cloud.",
+      });
+    }
+
     return res.status(401).json({ message: "Google authentication failed." });
   }
+};
+
+// Google OAuth redirect start endpoint (server-side flow).
+export const googleOAuthStart = async (req, res) => {
+  const frontendUrl = resolveFrontendUrl(
+    req.query?.frontendUrl,
+    req.headers.origin,
+    FRONTEND_URL,
+  );
+
+  if (!googleOAuthClient) {
+    return res.redirect(`${frontendUrl}/login?error=google_not_configured`);
+  }
+
+  const mode = req.query?.mode === "signup" ? "signup" : "signin";
+  const referralId =
+    mode === "signup" ? normalizeText(req.query?.referralId || "") : "";
+  const state = encodeGoogleState({ mode, referralId, frontendUrl });
+
+  const authUrl = googleOAuthClient.generateAuthUrl({
+    access_type: "offline",
+    scope: ["openid", "email", "profile"],
+    prompt: "select_account",
+    state,
+  });
+
+  return res.redirect(authUrl);
 };
 
 
 // Google OAuth callback: exchange code for tokens, then issue a JWT and redirect.
 export const googleOAuthCallback = async (req, res) => {
   const code = req.query.code;
-  if (!code) {
-    return res.redirect(`${FRONTEND_URL}/login?error=google_failed`);
+  const providerError = normalizeText(req.query?.error || "");
+  const providerErrorDescription = normalizeText(
+    req.query?.error_description || "",
+  );
+  const decodedState = decodeGoogleState(req.query?.state);
+  const requestedMode = req.query?.mode === "signup" ? "signup" : "signin";
+  const requestedReferralId =
+    requestedMode === "signup" ? normalizeText(req.query?.referralId || "") : "";
+  const requestedFrontendUrl = resolveFrontendUrl(
+    req.query?.frontendUrl,
+    req.headers.origin,
+    decodedState?.frontendUrl,
+    FRONTEND_URL,
+  );
+
+  if (providerError) {
+    return res.redirect(
+      buildGoogleErrorRedirect(
+        requestedFrontendUrl,
+        providerError,
+        providerErrorDescription,
+      ),
+    );
   }
 
+  // If no code is provided, treat this as "start OAuth" on the same endpoint.
+  if (!code) {
+    // Start flow only when this request explicitly asked to start.
+    if (!req.query?.mode) {
+      return res.redirect(
+        buildGoogleErrorRedirect(
+          requestedFrontendUrl,
+          "missing_code",
+          "No authorization code returned by Google.",
+        ),
+      );
+    }
+
+    if (!googleOAuthClient) {
+      return res.redirect(`${requestedFrontendUrl}/login?error=google_not_configured`);
+    }
+
+    const state = encodeGoogleState({
+      mode: requestedMode,
+      referralId: requestedReferralId,
+      frontendUrl: requestedFrontendUrl,
+    });
+
+    const authUrl = googleOAuthClient.generateAuthUrl({
+      access_type: "offline",
+      scope: ["openid", "email", "profile"],
+      prompt: "select_account",
+      state,
+    });
+
+    return res.redirect(authUrl);
+  }
+
+  const mode = decodedState?.mode === "signup" ? "signup" : "signin";
+  const referralId =
+    mode === "signup" ? normalizeText(decodedState?.referralId || "") : "";
+  const frontendUrl = resolveFrontendUrl(
+    decodedState?.frontendUrl,
+    requestedFrontendUrl,
+    FRONTEND_URL,
+  );
+
   if (!googleOAuthClient) {
-    return res.redirect(`${FRONTEND_URL}/login?error=google_not_configured`);
+    return res.redirect(`${frontendUrl}/login?error=google_not_configured`);
   }
 
   try {
     const { tokens } = await googleOAuthClient.getToken(code);
     if (!tokens?.id_token) {
-      return res.redirect(`${FRONTEND_URL}/login?error=google_failed`);
+      return res.redirect(
+        buildGoogleErrorRedirect(
+          frontendUrl,
+          "missing_id_token",
+          "Google token exchange succeeded but no ID token was returned.",
+        ),
+      );
     }
 
     const ticket = await googleClient.verifyIdToken({
@@ -336,14 +563,34 @@ export const googleOAuthCallback = async (req, res) => {
     });
 
     const payload = ticket.getPayload();
-    const user = await upsertGoogleUser(payload, "", req);
+    const user = await upsertGoogleUser(payload, referralId, req);
     clearAuthAnomaly(req);
     const token = signToken({ sub: user.id, role: user.role });
-    return res.redirect(`${FRONTEND_URL}/login?token=${encodeURIComponent(token)}`);
+
+    if (mode === "signup") {
+      return res.redirect(`${frontendUrl}/login?google=signup_success`);
+    }
+
+    return res.redirect(
+      `${frontendUrl}/login?token=${encodeURIComponent(token)}&redirect=${encodeURIComponent("/Dashboard")}`,
+    );
   } catch (error) {
-    console.error("Google OAuth callback failed:", error?.message || error);
+    console.error(
+      "Google OAuth callback failed:",
+      error?.response?.data || error?.message || error,
+    );
     logAuthAnomaly(req, "google-callback-failed");
-    return res.redirect(`${FRONTEND_URL}/login?error=google_failed`);
+    const reason =
+      error?.response?.data?.error ||
+      error?.code ||
+      "oauth_callback_failed";
+    const description =
+      error?.response?.data?.error_description ||
+      error?.message ||
+      "Google OAuth callback failed.";
+    return res.redirect(
+      buildGoogleErrorRedirect(frontendUrl, reason, description),
+    );
   }
 };
 
@@ -439,10 +686,17 @@ export const me = async (req, res) => {
 // Step 1: send a password reset link to the user's email.
 export const requestPasswordReset = async (req, res) => {
   // Read submitted email.
-  const { email } = req.body;
+  const { email, frontendUrl } = req.body;
   if (!email) {
     return res.status(400).json({ message: "Email is required." });
   }
+  const safeFrontendUrl = resolveFrontendUrl(
+    frontendUrl,
+    req.headers["x-frontend-origin"],
+    req.headers.origin,
+    req.headers.referer,
+    FRONTEND_URL,
+  );
 
   // Normalize email and look up user.
   const normalizedEmail = normalizeEmail(email);
@@ -476,15 +730,13 @@ export const requestPasswordReset = async (req, res) => {
   user.resetPasswordExpires = expires;
   await user.save();
 
-  try {
-    // Send reset email.
-    await sendPasswordResetEmail(user, token);
-  } catch (error) {
+  // Send reset email in background to avoid blocking API response on SMTP latency.
+  void sendPasswordResetEmail(user, token, safeFrontendUrl).catch((error) => {
     console.error(
       "Password reset email failed:",
       error?.message || error,
     );
-  }
+  });
 
   // Always return the same success message.
   return res.json({

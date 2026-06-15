@@ -1,11 +1,15 @@
 import React from "react";
+import { useAppContext } from "../common/AppContext";
+import { formatPriceAmount } from "../../utils/currencyFormat";
 
 const MarketTrades = ({ marketTrades = [] }) => {
+  const { currency, rates } = useAppContext();
+
   return (
     <div className="tx-panel tx-market-trades">
       <div className="tx-panel-title">Market Trades</div>
       <div className="tx-trade-head">
-        <span>Price</span>
+        <span>{`Price (${currency})`}</span>
         <span>Amount</span>
         <span>Time</span>
       </div>
@@ -16,7 +20,7 @@ const MarketTrades = ({ marketTrades = [] }) => {
           return (
             <div key={`mtrade-${i}`} className="tx-trade-row">
               <span className={isBuy ? "tx-change-up" : "tx-change-down"}>
-                {Number(trade.price).toLocaleString()}
+                {formatPriceAmount(trade.price, currency, rates)}
               </span>
               <span>{Number(trade.amount).toLocaleString()}</span>
               <span className="text-muted">

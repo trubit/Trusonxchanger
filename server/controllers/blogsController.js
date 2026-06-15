@@ -1,7 +1,6 @@
 import mongoose from "mongoose";
 import Blog from "../models/Blog.js";
 
-// Parse query limit (no default limit when omitted).
 const parseLimit = (value) => {
   if (value === undefined || value === null || value === "") {
     return null;
@@ -13,7 +12,6 @@ const parseLimit = (value) => {
   return parsed;
 };
 
-// Allow limited sort fields to avoid abuse.
 const parseSort = (value) => {
   if (!value) {
     return { updatedAt: -1 };
@@ -59,7 +57,11 @@ const ensureUniqueSlug = async (baseSlug, excludeId = null) => {
   return `${baseSlug}-${Date.now()}`;
 };
 
-// Normalize user input into a safe blog payload.
+const serializePost = (_req, postDoc) => {
+  if (!postDoc) return postDoc;
+  return postDoc.toJSON ? postDoc.toJSON() : postDoc;
+};
+
 const toPayload = (body) => ({
   title: body.title?.trim() ?? "",
   description: body.description?.trim() ?? "",
@@ -88,7 +90,8 @@ export const listBlogs = async (req, res) => {
       query.limit(limit);
     }
     const posts = await query;
-    res.json({ posts });
+    const payload = posts.map((post) => serializePost(req, post));
+    res.json({ posts: payload });
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
@@ -101,10 +104,20 @@ export const getBlog = async (req, res) => {
     if (!post) {
       return res.status(404).json({ message: "Post not found." });
     }
-    return res.json({ post });
+    return res.json({ post: serializePost(req, post) });
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
+};
+
+// POST /blogs/upload: upload blog image — stored as base64 data URL in MongoDB.
+export const uploadBlogImage = async (req, res) => {
+  if (!req.file) {
+    return res.status(400).json({ message: "Image file is required." });
+  }
+
+  const dataUrl = `data:${req.file.mimetype};base64,${req.file.buffer.toString("base64")}`;
+  return res.status(201).json({ url: dataUrl });
 };
 
 // POST /blogs: create a blog post.
@@ -118,7 +131,7 @@ export const createBlog = async (req, res) => {
     }
     payload.slug = await ensureUniqueSlug(slugify(payload.title));
     const post = await Blog.create(payload);
-    return res.status(201).json({ post });
+    return res.status(201).json({ post: serializePost(req, post) });
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
@@ -147,7 +160,7 @@ export const updateBlog = async (req, res) => {
     Object.assign(post, payload);
     await post.save();
 
-    return res.json({ post });
+    return res.json({ post: serializePost(req, post) });
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
@@ -176,7 +189,7 @@ export const likeBlog = async (req, res) => {
     }
     post.likes = (post.likes || 0) + 1;
     await post.save();
-    return res.json({ post });
+    return res.json({ post: serializePost(req, post) });
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
@@ -197,7 +210,7 @@ export const getRelatedBlogs = async (req, res) => {
     }
 
     const related = await Blog.find(query).sort({ updatedAt: -1 }).limit(5);
-    res.json({ posts: related });
+    res.json({ posts: related.map((item) => serializePost(req, item)) });
   } catch (err) {
     res.status(500).json({ message: err.message });
   }

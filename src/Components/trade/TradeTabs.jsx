@@ -1,6 +1,9 @@
 import React, { useState } from "react";
+import { useAppContext } from "../common/AppContext";
+import { formatPriceAmount } from "../../utils/currencyFormat";
 
 const TradeTabs = ({ openOrders = [], myTrades = [], wallets = [], onCancelOrder }) => {
+  const { currency, rates } = useAppContext();
   const [activeTab, setActiveTab] = useState("open");
 
   return (
@@ -33,7 +36,7 @@ const TradeTabs = ({ openOrders = [], myTrades = [], wallets = [], onCancelOrder
               <span>Date</span>
               <span>Pair</span>
               <span>Side</span>
-              <span>Price</span>
+              <span>{`Price (${currency})`}</span>
               <span>Amount</span>
               <span>Filled</span>
               <span>Action</span>
@@ -45,7 +48,7 @@ const TradeTabs = ({ openOrders = [], myTrades = [], wallets = [], onCancelOrder
                 <span className={order.side === "buy" ? "tx-change-up" : "tx-change-down"}>
                   {order.side.toUpperCase()}
                 </span>
-                <span>{order.price.toLocaleString()}</span>
+                <span>{formatPriceAmount(order.price, currency, rates)}</span>
                 <span>{order.amount.toLocaleString()}</span>
                 <span>{((order.filledAmount / order.amount) * 100).toFixed(1)}%</span>
                 <span>
@@ -68,9 +71,9 @@ const TradeTabs = ({ openOrders = [], myTrades = [], wallets = [], onCancelOrder
               <span>Date</span>
               <span>Pair</span>
               <span>Side</span>
-              <span>Price</span>
+              <span>{`Price (${currency})`}</span>
               <span>Amount</span>
-              <span>Total</span>
+              <span>{`Total (${currency})`}</span>
               <span>Status</span>
             </div>
             {myTrades.map((trade, i) => (
@@ -80,9 +83,15 @@ const TradeTabs = ({ openOrders = [], myTrades = [], wallets = [], onCancelOrder
                 <span className={trade.side === "buy" ? "tx-change-up" : "tx-change-down"}>
                   {trade.side.toUpperCase()}
                 </span>
-                <span>{trade.price.toLocaleString()}</span>
+                <span>{formatPriceAmount(trade.price, currency, rates)}</span>
                 <span>{trade.amount.toLocaleString()}</span>
-                <span>{(trade.price * trade.amount).toLocaleString()}</span>
+                <span>
+                  {formatPriceAmount(
+                    Number(trade.price) * Number(trade.amount),
+                    currency,
+                    rates,
+                  )}
+                </span>
                 <span className="text-muted">Completed</span>
               </div>
             ))}

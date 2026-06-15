@@ -1,4 +1,3 @@
-import MiniHeader from "../Components/layout/mini-header";
 import { Spinner } from "react-bootstrap";
 import TradeHeader from "../Components/trade/TradeHeader";
 import TradingChart from "../Components/trade/TradingChart";
@@ -9,6 +8,7 @@ import TradingPairs from "../Components/trade/TradingPairs";
 import TradeTabs from "../Components/trade/TradeTabs";
 import { useTradeStore } from "../store/useTradeStore";
 import { useTradeSocket } from "../hooks/useTradeSocket";
+import { useOrderSocket } from "../hooks/useOrderSocket";
 import { useTradeMarketStateQuery, useTradingPairsQuery } from "../hooks/queries/useTradeQueries";
 import {
   useCancelSpotOrderMutation,
@@ -16,7 +16,6 @@ import {
 } from "../hooks/mutations/useTradeMutations";
 import "../styles/trade.css";
 
-// TrusonXchanger live trading page.
 const Trade = () => {
   const {
     activeSymbol,
@@ -44,6 +43,9 @@ const Trade = () => {
     symbol: activeSymbol,
     isAuthenticated: marketStateQuery.isAuthenticated,
   });
+
+  // Receive ORDER_CREATED / ORDER_CANCELLED / ORDER_UPDATED events on user room.
+  useOrderSocket({ enabled: marketStateQuery.isAuthenticated });
 
   const snapshot = marketStateQuery.data || {};
   const pairs = snapshot?.pairs || pairsQuery.data || [];
@@ -73,7 +75,6 @@ const Trade = () => {
       amount: Number(form.amount),
       price: Number(form.price || ticker.lastPrice),
     };
-
     try {
       clearError();
       await placeOrderMutation.mutateAsync(payload);
@@ -99,67 +100,58 @@ const Trade = () => {
   };
 
   return (
-    <>
-      <MiniHeader showBreadcrumb={false} />
-      <section className="tx-trade-page">
-        <div className="tx-trade-shell">
-          <TradeHeader ticker={ticker} />
+    <section className="tx-trade-page">
+      <div className="tx-trade-shell">
+        <TradeHeader ticker={ticker} />
 
-          {loading ? (
-            <div className="tx-panel p-4 text-center">
-              <Spinner animation="border" size="sm" className="me-2" />
-              Loading market data...
-            </div>
-          ) : (
-            <>
-              <div className="tx-main-grid">
-                <OrderBook orderBook={orderBook} />
-
-                <div className="tx-center-stack">
-                  <TradingChart symbol={activeSymbol} />
-                  <TradeForm
-                    symbol={activeSymbol}
-                    orderType={orderType}
-                    ticker={ticker}
-                    setOrderType={setOrderType}
-                    buyForm={buyForm}
-                    sellForm={sellForm}
-                    setBuyField={setBuyField}
-                    setSellField={setSellField}
-                    wallets={wallets}
-                    onSubmitOrder={handleSubmitOrder}
-                    submitting={placeOrderMutation.isPending}
-                  />
-                </div>
-
-                <div className="d-flex flex-column gap-2">
-                  <TradingPairs
-                    pairs={pairs}
-                    activeSymbol={activeSymbol}
-                    search={search}
-                    onSearch={setSearch}
-                    onSelect={setActiveSymbol}
-                  />
-                  <MarketTrades
-                    marketTrades={marketTrades}
-                    myTrades={myTrades}
-                  />
-                </div>
+        {loading ? (
+          <div className="tx-panel p-4 text-center">
+            <Spinner animation="border" size="sm" className="me-2" />
+            Loading market data...
+          </div>
+        ) : (
+          <>
+            <div className="tx-main-grid">
+              <OrderBook orderBook={orderBook} />
+              <div className="tx-center-stack">
+                <TradingChart symbol={activeSymbol} />
+                <TradeForm
+                  symbol={activeSymbol}
+                  orderType={orderType}
+                  ticker={ticker}
+                  setOrderType={setOrderType}
+                  buyForm={buyForm}
+                  sellForm={sellForm}
+                  setBuyField={setBuyField}
+                  setSellField={setSellField}
+                  wallets={wallets}
+                  onSubmitOrder={handleSubmitOrder}
+                  submitting={placeOrderMutation.isPending}
+                />
               </div>
+              <div className="d-flex flex-column gap-2">
+                <TradingPairs
+                  pairs={pairs}
+                  activeSymbol={activeSymbol}
+                  search={search}
+                  onSearch={setSearch}
+                  onSelect={setActiveSymbol}
+                />
+                <MarketTrades marketTrades={marketTrades} myTrades={myTrades} />
+              </div>
+            </div>
+            <TradeTabs
+              openOrders={openOrders}
+              myTrades={myTrades}
+              wallets={wallets}
+              onCancelOrder={handleCancelOrder}
+            />
+          </>
+        )}
 
-              <TradeTabs
-                openOrders={openOrders}
-                myTrades={myTrades}
-                wallets={wallets}
-                onCancelOrder={handleCancelOrder}
-              />
-            </>
-          )}
-
-          {error ? <div className="tx-error-banner">{error}</div> : null}
-        </div>
-      </section>
-    </>
+        {error ? <div className="tx-error-banner">{error}</div> : null}
+      </div>
+    </section>
   );
 };
 

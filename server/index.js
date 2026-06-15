@@ -1,5 +1,7 @@
 import "./env.js";
 import http from "http";
+import fs from "fs";
+import path from "path";
 import cors from "cors";
 import express from "express";
 import helmet from "helmet";
@@ -24,6 +26,7 @@ import subscriptionsRoutes from "./routes/subscriptions.js";
 import newsletterRoutes from "./routes/newsletter.js";
 import supportRoutes from "./routes/support.js";
 import tradesRoutes from "./routes/trades.js";
+import ordersRoutes from "./routes/orders.js";
 import transactionsRoutes from "./routes/transactions.js";
 import usersRoutes from "./routes/users.js";
 import walletsRoutes from "./routes/wallets.js";
@@ -31,12 +34,25 @@ import trusonCoinsRoutes from "./routes/trusonCoins.js";
 import currencyRoutes from "./routes/currency.js";
 import contactRoutes from "./routes/contactRoutes.js";
 import marketRoutes from "./routes/market.js";
+import dashboardRoutes from "./routes/dashboard.js";
+import engineRoutes from "./routes/engine.js";
+import marketDataRoutes from "./routes/marketData.js";
 import { setupTradeSocketServer } from "./socket/socketServer.js";
+import { MatchingEngine } from "./engine/MatchingEngine.js";
+import { TradeExecutor } from "./engine/TradeExecutor.js";
+import { mePublisher } from "./engine/publisher.js";
+import { meBroadcaster } from "./socket/meEvents.js";
+import { MarketDataService } from "./market/MarketDataService.js";
+import { marketDataBroadcaster } from "./socket/marketDataEvents.js";
+import Order from "./models/Order.js";
+import Coin from "./models/Coin.js";
+import { TRUSON_COIN_SEED } from "./config/supportedAssets.js";
 
 const app = express();
 const PORT = process.env.PORT || 5000;
 const MONGODB_URI = process.env.MONGODB_URI;
 const CORS_ORIGIN = process.env.CORS_ORIGIN || "*";
+const UPLOADS_ROOT = path.join(process.cwd(), "server", "uploads");
 
 const corsOrigins =
   CORS_ORIGIN === "*"
@@ -72,6 +88,7 @@ app.use(
       "Authorization",
       "x-request-id",
       "x-client-timezone",
+      "x-frontend-origin",
     ],
     maxAge: 86400,
   }),
@@ -95,6 +112,8 @@ app.use((req, res, next) => {
 app.use(express.json({ limit: "8mb" }));
 app.use(express.urlencoded({ extended: false, limit: "8mb" }));
 app.use("/api", globalApiLimiter);
+fs.mkdirSync(UPLOADS_ROOT, { recursive: true });
+app.use("/uploads", express.static(UPLOADS_ROOT));
 
 app.get("/health", (_req, res) => {
   const mongoStateMap = {
@@ -123,10 +142,12 @@ app.get("/metrics", async (_req, res) => {
 
 app.use("/api/contact-us", contactRoutes);
 app.use("/api/market", marketRoutes);
+app.use("/api/dashboard", dashboardRoutes);
 app.use("/api/auth", authRoutes);
 app.use("/api/coins", coinsRoutes);
 app.use("/api/users", usersRoutes);
 app.use("/api/trades", tradesRoutes);
+app.use("/api/orders", ordersRoutes);
 app.use("/api/subscriptions", subscriptionsRoutes);
 app.use("/api/support", supportRoutes);
 app.use("/api/wallets", walletsRoutes);
@@ -136,6 +157,8 @@ app.use("/api/blogs", blogsRoutes);
 app.use("/api/trusonCoins", trusonCoinsRoutes);
 app.use("/api/newsletter", newsletterRoutes);
 app.use("/api/currency", currencyRoutes);
+app.use("/api/engine", engineRoutes);
+app.use("/api/market-data", marketDataRoutes);
 
 app.use(notFound);
 app.use(errorHandler);
@@ -149,9 +172,46 @@ const startServer = async () => {
   try {
     await connectDb(MONGODB_URI);
     const httpServer = http.createServer(app);
-    const tradePublisher = setupTradeSocketServer(httpServer);
+    const tradePublisher = setupTradeSocketServer(httpServer, {
+      cors: {
+        origin: corsOrigins,
+        methods: ["GET", "POST"],
+        credentials: corsOrigins !== "*",
+      },
+    });
     app.locals.tradePublisher = tradePublisher;
     app.locals.logger = logger;
+
+    // Seed TrusonCoin in the coin catalog if not already present.
+    try {
+      await Coin.findOneAndUpdate(
+        { symbol: TRUSON_COIN_SEED.symbol },
+        { $setOnInsert: TRUSON_COIN_SEED },
+        { upsert: true }
+      );
+    } catch (err) {
+      logger.warn({ err: err.message }, "TrusonCoin seed skipped.");
+    }
+
+    // Initialize in-process matching engine (uses main DB + Redis + Socket.IO)
+    try {
+      const tradeExecutor = new TradeExecutor({ publisher: mePublisher });
+      const matchingEngine = new MatchingEngine({ tradeExecutor, broadcaster: meBroadcaster });
+      await matchingEngine.hydrate(Order);
+      matchingEngine.start();
+      app.locals.matchingEngine = matchingEngine;
+    } catch (err) {
+      logger.error({ err: err.message }, "[ME] Matching engine failed to start — trading continues without matching.");
+    }
+
+    // Initialize market data service (subscribes to trade_events, builds price/candle state)
+    try {
+      const marketDataService = new MarketDataService({ broadcaster: marketDataBroadcaster });
+      await marketDataService.start();
+      app.locals.marketDataService = marketDataService;
+    } catch (err) {
+      logger.error({ err: err.message }, "[Market] Market data service failed to start.");
+    }
 
     httpServer.listen(PORT, () => {
       logger.info(

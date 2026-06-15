@@ -1,9 +1,10 @@
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import {
   useCreateBlogMutation,
   useDeleteBlogMutation,
   useUpdateBlogMutation,
 } from "./mutations/useBlogMutations";
+import { uploadBlogImage } from "../services/api/blogs";
 
 const emptyForm = {
   title: "",
@@ -15,6 +16,33 @@ const emptyForm = {
 };
 
 export const MAX_IMAGE_SIZE_MB = 3;
+
+const toFriendlyBlogError = (err, fallback) => {
+  const status = err?.status;
+  if (status === 401) {
+    return "Please log in again to continue.";
+  }
+  if (status === 403) {
+    return "Your account does not currently have permission for this action.";
+  }
+  return err?.message || fallback;
+};
+
+const readFileAsDataUrl = (file) =>
+  new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => {
+      if (typeof reader.result !== "string") {
+        reject(new Error("Unable to read the selected image."));
+        return;
+      }
+      resolve(reader.result);
+    };
+    reader.onerror = () => {
+      reject(new Error("Unable to read the selected image."));
+    };
+    reader.readAsDataURL(file);
+  });
 
 // Hook for managing the blog update form state + image uploads.
 export const useBlogUpdateForm = ({
@@ -30,15 +58,13 @@ export const useBlogUpdateForm = ({
   const [editingId, setEditingId] = useState("new");
   const [formData, setFormData] = useState(emptyForm);
   const [uploadError, setUploadError] = useState("");
+  const [uploadingImage, setUploadingImage] = useState(false);
   const [saveError, setSaveError] = useState("");
 
-  const imageUrlValue = useMemo(
-    () =>
-      formData.image && formData.image.startsWith("data:")
-        ? ""
-        : formData.image,
-    [formData.image]
-  );
+  const imageUrlValue =
+    formData.image && formData.image.startsWith("data:")
+      ? ""
+      : formData.image;
 
   const handleSelectChange = (event) => {
     const value = event.target.value;
@@ -74,10 +100,14 @@ export const useBlogUpdateForm = ({
 
   const handleFieldChange = (event) => {
     const { name, value } = event.target;
+    if (name === "image") {
+      setUploadError("");
+    }
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleImageUpload = (event) => {
+  const handleImageUpload = async (event) => {
+    const input = event.target;
     const file = event.target.files?.[0];
     if (!file) {
       return;
@@ -85,6 +115,7 @@ export const useBlogUpdateForm = ({
 
     if (!file.type.startsWith("image/")) {
       setUploadError("Please select an image file.");
+      input.value = "";
       return;
     }
 
@@ -93,22 +124,47 @@ export const useBlogUpdateForm = ({
       setUploadError(
         `Image is too large. Max size is ${MAX_IMAGE_SIZE_MB} MB.`
       );
+      input.value = "";
       return;
     }
 
-    const reader = new FileReader();
-    reader.onload = () => {
-      setFormData((prev) => ({
-        ...prev,
-        image: reader.result,
-        imageAlt: prev.imageAlt || file.name,
-      }));
-      setUploadError("");
-    };
-    reader.readAsDataURL(file);
+    setUploadingImage(true);
+    setUploadError("");
+    try {
+      const payload = await uploadBlogImage(file);
+      const imageValue = payload?.url || payload?.path || "";
+      if (!imageValue) {
+        setUploadError("Upload failed. Please try again.");
+        return;
+      }
+      setFormData((prev) => ({ ...prev, image: imageValue }));
+    } catch (err) {
+      const status = err?.status;
+      const message = err?.message || "";
+      const uploadRouteMissing =
+        status === 404 || /route not found/i.test(message);
+
+      if (uploadRouteMissing) {
+        try {
+          const dataUrl = await readFileAsDataUrl(file);
+          setFormData((prev) => ({ ...prev, image: dataUrl }));
+          setUploadError(
+            "Upload endpoint not available on this server yet. Using local image data for now."
+          );
+        } catch (fallbackErr) {
+          setUploadError(fallbackErr.message || "Upload failed. Please try again.");
+        }
+      } else {
+        setUploadError(toFriendlyBlogError(err, "Upload failed. Please try again."));
+      }
+    } finally {
+      setUploadingImage(false);
+      input.value = "";
+    }
   };
 
   const handleRemoveImage = () => {
+    setUploadError("");
     setFormData((prev) => ({ ...prev, image: "" }));
   };
 
@@ -120,13 +176,18 @@ export const useBlogUpdateForm = ({
       title: formData.title.trim(),
       description: formData.description.trim(),
       date: formData.date.trim(),
-      image: formData.image.trim(),
+      image: formData.image,
       imageAlt: formData.imageAlt.trim(),
       tag: formData.tag.trim(),
     };
 
     if (!payload.title || !payload.description) {
       setSaveError("Title and description are required.");
+      return;
+    }
+
+    if (uploadingImage) {
+      setSaveError("Please wait for the image upload to finish.");
       return;
     }
 
@@ -147,7 +208,7 @@ export const useBlogUpdateForm = ({
         }
       }
     } catch (err) {
-      setSaveError(err.message || "Unable to save blog post.");
+      setSaveError(toFriendlyBlogError(err, "Unable to save blog post."));
     }
   };
 
@@ -169,7 +230,7 @@ export const useBlogUpdateForm = ({
       setFormData(emptyForm);
       onSaveSuccess?.();
     } catch (err) {
-      setSaveError(err.message || "Unable to delete blog post.");
+      setSaveError(toFriendlyBlogError(err, "Unable to delete blog post."));
     }
   };
 
@@ -197,6 +258,7 @@ export const useBlogUpdateForm = ({
     uploadError,
     saveError,
     saving: createMutation.isPending || updateMutation.isPending,
+    uploadingImage,
     deleting: deleteMutation.isPending,
     imageUrlValue,
     handleSelectChange,

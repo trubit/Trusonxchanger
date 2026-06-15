@@ -1,17 +1,17 @@
- import express from "express";
+import express from "express";
 import {
-  createWallet,
-  listWallets,
-  updateWallet,
+  deposit,
+  getMyTransactions,
+  getMyWallets,
+  withdraw,
 } from "../controllers/walletsController.js";
 import { requireAuth } from "../middleware/auth.js";
 
-// Wallet routes (authenticated).
 const router = express.Router();
 
-router.get("/", requireAuth, listWallets);
-router.post("/", requireAuth, createWallet);
-router.put("/:id", requireAuth, updateWallet);
+router.get("/",             requireAuth, getMyWallets);
+router.post("/deposit",     requireAuth, deposit);
+router.post("/withdraw",    requireAuth, withdraw);
+router.get("/transactions", requireAuth, getMyTransactions);
 
-export default router; 
-
+export default router;

@@ -1,8 +1,6 @@
 import { useMemo, useState } from "react";
-import { Card, Form, Button, Alert, Spinner } from "react-bootstrap";
+import { Form, Button, Alert, Spinner } from "react-bootstrap";
 import { Link, useSearchParams } from "react-router-dom";
-import ToggleTheme from "../Components/common/toggleTheme";
-import AuthBranding from "../Components/auth/authBranding";
 import "../styles/login.css";
 import { resendEmailVerification, verifyEmail } from "../services/api/auth";
 
@@ -71,155 +69,120 @@ const VerifyEmail = () => {
   const showResendForm = status === "error" || status === "idle";
 
   return (
-    <div className="position-relative min-vh-100">
-      <ToggleTheme />
-      <div className="container d-flex flex-column flex-lg-row gap-5 align-items-lg-start justify-content-center">
-        <AuthBranding />
+    <section className="tx-login-page">
+      <div className="tx-login-bg" aria-hidden="true" />
+      <main className="tx-login-main">
+        <article className="tx-login-card" aria-labelledby="tx-verify-title">
+          <header className="tx-login-head">
+            <h1 id="tx-verify-title">Verify Code</h1>
+            <p>
+              Enter the 6-digit code we sent to your email to complete sign up.
+            </p>
+          </header>
 
-        <div className="d-flex align-items-center justify-content-center p-3 main-login-background">
-          <div className="login-background">
-            <Card
-              className="border-0 shadow-xl overflow-hidden"
-              id="form-login"
-            >
-              <Card.Body className="p-4 p-md-5">
-                <h3 className="text-center fw-bold mb-2">Verify Code</h3>
-                <p className="text-center mb-4 mb-md-5">
-                  Enter the 6-digit code we sent to your email to complete sign up.
-                </p>
+          {status === "loading" && (
+            <Alert variant="info" className="tx-login-alert">
+              <Spinner as="span" animation="border" size="sm" className="me-2" />
+              Verifying your email...
+            </Alert>
+          )}
 
-                {status === "loading" && (
-                  <Alert variant="info">
-                    <Spinner
-                      as="span"
-                      animation="border"
-                      size="sm"
-                      className="me-2"
-                    />
-                    Verifying your email...
+          {status === "success" && (
+            <Alert variant="success" className="tx-login-alert">
+              {message}
+            </Alert>
+          )}
+
+          {status === "error" && message && (
+            <Alert variant="danger" className="tx-login-alert">
+              {message}
+            </Alert>
+          )}
+
+          {status !== "success" && (
+            <Form onSubmit={handleVerify} noValidate>
+              <Form.Group className="tx-login-group" controlId="tx-verify-code">
+                <Form.Label>Verification Code</Form.Label>
+                <Form.Control
+                  type="text"
+                  inputMode="numeric"
+                  placeholder="6-digit code"
+                  value={code}
+                  onChange={(e) => setCode(e.target.value.replace(/\s/g, ""))}
+                  disabled={status === "loading"}
+                />
+              </Form.Group>
+
+              <Button
+                type="submit"
+                className="tx-login-submit"
+                disabled={status === "loading"}
+              >
+                {status === "loading" ? (
+                  <>
+                    <Spinner as="span" animation="border" size="sm" className="me-2" />
+                    Verifying...
+                  </>
+                ) : (
+                  "Verify code"
+                )}
+              </Button>
+            </Form>
+          )}
+
+          {showResendForm && (
+            <>
+              <div className="tx-login-divider" role="presentation">
+                <span>resend verification code</span>
+              </div>
+
+              <Form onSubmit={handleResend} noValidate>
+                <Form.Group className="tx-login-group" controlId="tx-verify-email">
+                  <Form.Label>Email Address</Form.Label>
+                  <Form.Control
+                    type="email"
+                    placeholder="name@example.com"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    disabled={resendStatus === "loading"}
+                  />
+                </Form.Group>
+
+                {resendMessage && (
+                  <Alert
+                    variant={resendStatus === "success" ? "success" : "danger"}
+                    className="tx-login-alert"
+                  >
+                    {resendMessage}
                   </Alert>
                 )}
 
-                {status === "success" && (
-                  <Alert variant="success">{message}</Alert>
-                )}
+                <Button
+                  type="submit"
+                  className="tx-login-submit"
+                  disabled={resendStatus === "loading"}
+                >
+                  {resendStatus === "loading" ? (
+                    <>
+                      <Spinner as="span" animation="border" size="sm" className="me-2" />
+                      Sending...
+                    </>
+                  ) : (
+                    "Resend verification code"
+                  )}
+                </Button>
+              </Form>
+            </>
+          )}
 
-                {status === "error" && message && (
-                  <Alert variant="danger">{message}</Alert>
-                )}
-
-                {status !== "success" && (
-                  <Form onSubmit={handleVerify}>
-                    <Form.Group className="mb-3">
-                      <Form.Label className="fw-medium">
-                        Verification code
-                      </Form.Label>
-                      <Form.Control
-                        type="text"
-                        inputMode="numeric"
-                        placeholder="6-digit code"
-                        value={code}
-                        size="md"
-                        onChange={(e) =>
-                          setCode(e.target.value.replace(/\s/g, ""))
-                        }
-                        disabled={status === "loading"}
-                        className="form-control-email"
-                      />
-                    </Form.Group>
-
-                    <Button
-                      variant="primary"
-                      size="lg"
-                      className="w-100 fw-bold button-form mb-3"
-                      type="submit"
-                      disabled={status === "loading"}
-                    >
-                      {status === "loading" ? (
-                        <>
-                          <Spinner
-                            as="span"
-                            animation="border"
-                            size="sm"
-                            className="me-2"
-                          />
-                          Verifying...
-                        </>
-                      ) : (
-                        "Verify code"
-                      )}
-                    </Button>
-                  </Form>
-                )}
-
-                {showResendForm && (
-                  <Form onSubmit={handleResend}>
-                    <Form.Group className="mb-3">
-                      <Form.Label className="fw-medium">
-                        Email address
-                      </Form.Label>
-                      <Form.Control
-                        type="email"
-                        placeholder="name@example.com"
-                        value={email}
-                        size="md"
-                        onChange={(e) => setEmail(e.target.value)}
-                        disabled={resendStatus === "loading"}
-                        className="form-control-email"
-                      />
-                    </Form.Group>
-
-                    {resendMessage && (
-                      <Alert
-                        variant={
-                          resendStatus === "success" ? "success" : "danger"
-                        }
-                      >
-                        {resendMessage}
-                      </Alert>
-                    )}
-
-                    <Button
-                      variant="success"
-                      size="lg"
-                      className="w-100 fw-bold button-form"
-                      type="submit"
-                      disabled={resendStatus === "loading"}
-                    >
-                      {resendStatus === "loading" ? (
-                        <>
-                          <Spinner
-                            as="span"
-                            animation="border"
-                            size="sm"
-                            className="me-2"
-                          />
-                          Sending...
-                        </>
-                      ) : (
-                        "Resend verification code"
-                      )}
-                    </Button>
-                  </Form>
-                )}
-
-                {status === "success" && (
-                  <div className="text-center mt-4 small">
-                    Ready to continue? &nbsp;&nbsp;
-                    <Link
-                      to="/login"
-                      className="text-success fw-medium text-decoration-none"
-                    >
-                      Log in
-                    </Link>
-                  </div>
-                )}
-              </Card.Body>
-            </Card>
-          </div>
-        </div>
-      </div>
-    </div>
+          {status === "success" && (
+            <p className="tx-login-footer">
+              Ready to continue? <Link to="/login">Log in</Link>
+            </p>
+          )}
+        </article>
+      </main>
+    </section>
   );
 };
 

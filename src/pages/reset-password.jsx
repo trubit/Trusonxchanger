@@ -1,9 +1,7 @@
 import { useEffect, useState } from "react";
-import { Card, Form, Button, Alert, Spinner, InputGroup } from "react-bootstrap";
+import { Form, Button, Alert, Spinner, InputGroup } from "react-bootstrap";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { Eye, EyeSlash } from "react-bootstrap-icons";
-import ToggleTheme from "../Components/common/toggleTheme";
-import AuthBranding from "../Components/auth/authBranding";
 import "../styles/login.css";
 import { resetPassword } from "../services/api/auth";
 
@@ -71,107 +69,96 @@ const ResetPassword = () => {
   };
 
   return (
-    <div className="position-relative min-vh-100">
-      <ToggleTheme />
-      <div className="container d-flex flex-column flex-lg-row gap-5 align-items-lg-start justify-content-center">
-        <AuthBranding />
+    <section className="tx-login-page">
+      <div className="tx-login-bg" aria-hidden="true" />
+      <main className="tx-login-main">
+        <article className="tx-login-card" aria-labelledby="tx-reset-title">
+          <header className="tx-login-head">
+            <h1 id="tx-reset-title">Reset Password</h1>
+            <p>Enter a new password below to reclaim access.</p>
+          </header>
 
-        <div className="d-flex align-items-center justify-content-center p-3 main-login-background">
-          <div className="login-background">
-            <Card className="border-0 shadow-xl overflow-hidden" id="form-login">
-              <Card.Body className="p-4 p-md-5">
-                <h3 className="text-center fw-bold mb-2">Reset Password</h3>
-                <p className="text-center mb-4 mb-md-5">
-                  Enter a new password below to reclaim access.
-                </p>
+          {error && <Alert variant="danger" className="tx-login-alert">{error}</Alert>}
+          {success && <Alert variant="success" className="tx-login-alert">{success}</Alert>}
 
-                {error && (
-                  <Alert variant="danger" dismissible>
-                    {error}
-                  </Alert>
-                )}
-                {success && <Alert variant="success">{success}</Alert>}
+          <Form onSubmit={handleSubmit} noValidate>
+            <Form.Group className="tx-login-group" controlId="tx-reset-password">
+              <Form.Label>New Password</Form.Label>
+              <InputGroup>
+                <Form.Control
+                  type={showPassword ? "text" : "password"}
+                  name="password"
+                  autoComplete="new-password"
+                  placeholder="Enter new password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  disabled={isSubmitting}
+                />
+                <Button
+                  type="button"
+                  variant="outline-secondary"
+                  onClick={() => setShowPassword((prev) => !prev)}
+                  className="tx-login-password-toggle"
+                  aria-label={showPassword ? "Hide password" : "Show password"}
+                  disabled={isSubmitting}
+                >
+                  {showPassword ? <EyeSlash size={17} /> : <Eye size={17} />}
+                </Button>
+              </InputGroup>
+            </Form.Group>
 
-                <Form onSubmit={handleSubmit}>
-                  <Form.Group className="mb-3">
-                    <Form.Label className="fw-medium">New password</Form.Label>
-                    <InputGroup>
-                      <Form.Control
-                        type={showPassword ? "text" : "password"}
-                        placeholder="New password"
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                        disabled={isSubmitting}
-                        className="form-control-email"
-                      />
-                      <InputGroup.Text
-                        className="input-group-text"
-                        onClick={() => setShowPassword((prev) => !prev)}
-                      >
-                        {showPassword ? <EyeSlash size={20} /> : <Eye size={20} />}
-                      </InputGroup.Text>
-                    </InputGroup>
-                  </Form.Group>
+            <Form.Group className="tx-login-group" controlId="tx-reset-confirm-password">
+              <Form.Label>Confirm New Password</Form.Label>
+              <InputGroup>
+                <Form.Control
+                  type={showConfirmPassword ? "text" : "password"}
+                  name="confirmPassword"
+                  autoComplete="new-password"
+                  placeholder="Confirm new password"
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  disabled={isSubmitting}
+                />
+                <Button
+                  type="button"
+                  variant="outline-secondary"
+                  onClick={() => setShowConfirmPassword((prev) => !prev)}
+                  className="tx-login-password-toggle"
+                  aria-label={
+                    showConfirmPassword
+                      ? "Hide confirm password"
+                      : "Show confirm password"
+                  }
+                  disabled={isSubmitting}
+                >
+                  {showConfirmPassword ? <EyeSlash size={17} /> : <Eye size={17} />}
+                </Button>
+              </InputGroup>
+            </Form.Group>
 
-                  <Form.Group className="mb-4">
-                    <Form.Label className="fw-medium">
-                      Confirm new password
-                    </Form.Label>
-                    <InputGroup>
-                      <Form.Control
-                        type={showConfirmPassword ? "text" : "password"}
-                        placeholder="Confirm password"
-                        value={confirmPassword}
-                        onChange={(e) => setConfirmPassword(e.target.value)}
-                        disabled={isSubmitting}
-                        className="form-control-email"
-                      />
-                      <InputGroup.Text
-                        className="input-group-text"
-                        onClick={() => setShowConfirmPassword((prev) => !prev)}
-                      >
-                        {showConfirmPassword ? (
-                          <EyeSlash size={20} />
-                        ) : (
-                          <Eye size={20} />
-                        )}
-                      </InputGroup.Text>
-                    </InputGroup>
-                  </Form.Group>
+            <Button
+              type="submit"
+              className="tx-login-submit"
+              disabled={isSubmitting}
+            >
+              {isSubmitting ? (
+                <>
+                  <Spinner as="span" animation="border" size="sm" className="me-2" />
+                  Resetting...
+                </>
+              ) : (
+                "Reset password"
+              )}
+            </Button>
+          </Form>
 
-                  <Button
-                    variant="success"
-                    size="lg"
-                    className="w-100 fw-bold button-form"
-                    type="submit"
-                    disabled={isSubmitting}
-                  >
-                    {isSubmitting ? (
-                      <>
-                        <Spinner animation="border" size="sm" className="me-2" />
-                        Resetting...
-                      </>
-                    ) : (
-                      "Reset password"
-                    )}
-                  </Button>
-
-                  <div className="text-center mt-4 small">
-                    Need another link? &nbsp;
-                    <Link
-                      to="/forgot-password"
-                      className="text-success fw-medium text-decoration-none"
-                    >
-                      Request a new reset email
-                    </Link>
-                  </div>
-                </Form>
-              </Card.Body>
-            </Card>
-          </div>
-        </div>
-      </div>
-    </div>
+          <p className="tx-login-footer">
+            Need another link?{" "}
+            <Link to="/forgot-password">Request reset email</Link>
+          </p>
+        </article>
+      </main>
+    </section>
   );
 };
 

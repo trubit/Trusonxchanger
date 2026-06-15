@@ -3,12 +3,6 @@ import { queryKeys } from "../../api/queryKeys";
 import { fetchCoins } from "../../services/api/coins";
 import { marketService } from "../../services/marketService";
 
-const formatUsd = (value) => {
-  if (value >= 1e12) return `$${(value / 1e12).toFixed(2)} Trillion USD`;
-  if (value >= 1e9) return `$${(value / 1e9).toFixed(2)} Billion USD`;
-  return `$${Number(value || 0).toLocaleString()} USD`;
-};
-
 export const useMainCoinQuery = () =>
   useQuery({
     queryKey: queryKeys.market.mainCoin,
@@ -38,8 +32,8 @@ export const useGlobalStatsQuery = () =>
       const response = await marketService.getGlobalStats();
       const stats = response.data?.data || {};
       return {
-        marketCap: formatUsd(Number(stats.total_market_cap?.usd || 0)),
-        tradingVolume: formatUsd(Number(stats.total_volume?.usd || 0)),
+        marketCapUsd: Number(stats.total_market_cap?.usd || 0),
+        tradingVolumeUsd: Number(stats.total_volume?.usd || 0),
       };
     },
     refetchInterval: 300_000,
@@ -56,4 +50,3 @@ export const useTrusonCoinQuery = () =>
     staleTime: 60_000,
     refetchInterval: 60_000,
   });
-

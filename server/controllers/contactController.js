@@ -42,6 +42,10 @@ const formatMessageHtml = ({ fullName, email, subject, message }) => {
 const WAITLIST_LABELS = {
   arbitrage: "Arbitrage Suite",
   subscription: "Subscription Services",
+  futures: "Futures Trading",
+  future: "Futures Trading",
+  sports: "Sports Trading & Prediction Hub",
+  sport: "Sports Trading & Prediction Hub",
 };
 
 const formatWaitlistText = ({ email, waitlistType, sourceIp, userAgent }) => {

@@ -5,6 +5,46 @@
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>trusonxchanger</title>
+    <script>
+      (function () {
+        if (typeof console !== "undefined" && console.log) {
+          console.log(
+            "%cSTOP!",
+            "color:#ff3b3b;font-size:48px;font-weight:bold;"
+          );
+          console.log(
+            "%cThis is a browser feature intended for developers.\n" +
+            "If someone told you to copy and paste something here,\n" +
+            "it is a scam and will give them access to your account.\n\n" +
+            "TrusonXchanger will NEVER ask you to use this console.",
+            "color:#ffffff;font-size:14px;line-height:1.6;"
+          );
+        }
+      })();
+    </script>
+    <script>
+      (function () {
+        try {
+          var defaultGoogTrans = "/en/en";
+          document.cookie = "googtrans=" + defaultGoogTrans + "; path=/; SameSite=Lax";
+
+          var host = window.location.hostname || "";
+          if (host && host !== "localhost" && host !== "127.0.0.1" && host !== "0.0.0.0") {
+            var baseDomain = host.indexOf("www.") === 0 ? host.slice(4) : host;
+            document.cookie =
+              "googtrans=" +
+              defaultGoogTrans +
+              "; path=/; domain=." +
+              baseDomain +
+              "; SameSite=Lax";
+          }
+
+          window.localStorage.setItem("language", "en");
+        } catch (_error) {
+          // Ignore: preserve app boot even if storage/cookie access fails.
+        }
+      })();
+    </script>
   </head>
   <body>
     <noscript>

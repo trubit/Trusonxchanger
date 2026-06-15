@@ -1,21 +1,11 @@
 import { create } from "zustand";
-import { walletService } from "../services/walletService";
 
-export const useWalletStore = create((set) => ({
-  wallets: [],
-  loading: false,
-  error: "",
+// Lightweight UI store — server state lives in React Query.
+// This store tracks which asset/action panel is active in the wallet page.
+export const useWalletUiStore = create((set) => ({
+  activeAsset: "USDT",
+  activeTab:   "deposit",   // "deposit" | "withdraw"
 
-  loadWallets: async () => {
-    set({ loading: true, error: "" });
-    try {
-      const payload = await walletService.list();
-      set({ wallets: payload?.wallets || [], loading: false });
-    } catch (error) {
-      set({
-        loading: false,
-        error: error.message || "Unable to load wallets.",
-      });
-    }
-  },
+  setActiveAsset: (asset) => set({ activeAsset: asset }),
+  setActiveTab:   (tab)   => set({ activeTab: tab }),
 }));

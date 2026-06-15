@@ -1,6 +1,9 @@
 import React from "react";
+import { useAppContext } from "../common/AppContext";
+import { formatPriceAmount } from "../../utils/currencyFormat";
 
 const OrderBook = ({ orderBook }) => {
+  const { currency, rates } = useAppContext();
   const { bids = [], asks = [] } = orderBook || {};
   const toLevel = (level) => {
     if (Array.isArray(level)) {
@@ -27,9 +30,9 @@ const OrderBook = ({ orderBook }) => {
       <div className="tx-panel-title">Order Book</div>
       
       <div className="tx-book-head">
-        <span>Price</span>
+        <span>{`Price (${currency})`}</span>
         <span>Amount</span>
-        <span>Total</span>
+        <span>{`Total (${currency})`}</span>
       </div>
 
       <div className="tx-book-list tx-book-asks">
@@ -40,9 +43,9 @@ const OrderBook = ({ orderBook }) => {
             const level = toLevel(ask);
             return (
               <div key={`ask-${i}`} className="tx-book-row tx-book-sell">
-                <span>{level.price.toLocaleString()}</span>
+                <span>{formatPriceAmount(level.price, currency, rates)}</span>
                 <span>{level.amount.toLocaleString()}</span>
-                <span>{level.total.toLocaleString()}</span>
+                <span>{formatPriceAmount(level.total, currency, rates)}</span>
               </div>
             );
           })}
@@ -53,9 +56,9 @@ const OrderBook = ({ orderBook }) => {
           const level = toLevel(bid);
           return (
             <div key={`bid-${i}`} className="tx-book-row tx-book-buy">
-              <span>{level.price.toLocaleString()}</span>
+              <span>{formatPriceAmount(level.price, currency, rates)}</span>
               <span>{level.amount.toLocaleString()}</span>
-              <span>{level.total.toLocaleString()}</span>
+              <span>{formatPriceAmount(level.total, currency, rates)}</span>
             </div>
           );
         })}

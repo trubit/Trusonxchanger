@@ -1,9 +1,12 @@
 import axios from "axios";
 
-export const API_BASE_URL =
-  import.meta.env.VITE_TRUSON_API_URL ||
-  import.meta.env.VITE_API_URL ||
-  "http://localhost:5000";
+// In dev, use "" so requests go through the Vite proxy (same-origin, no CORS).
+// In production, read the explicit API origin from env.
+export const API_BASE_URL = import.meta.env.DEV
+  ? ""
+  : (import.meta.env.VITE_TRUSON_API_URL ||
+     import.meta.env.VITE_API_URL ||
+     "");
 
 const DEFAULT_TIMEOUT_MS = 20_000;
 const DEFAULT_RETRY_DELAYS_MS = [400, 1200, 2600];
@@ -66,6 +69,20 @@ const rawClient = axios.create({
 });
 
 apiClient.interceptors.request.use((config) => {
+  if (config.data instanceof FormData) {
+    // Let the browser set multipart boundaries for FormData.
+    if (typeof config.headers?.delete === "function") {
+      config.headers.delete("Content-Type");
+    }
+    if (typeof config.headers?.set === "function") {
+      config.headers.set("Content-Type", undefined);
+    } else {
+      config.headers = {
+        ...(config.headers || {}),
+        "Content-Type": undefined,
+      };
+    }
+  }
   const token = getToken();
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
@@ -162,13 +179,17 @@ export const requestWithRetry = async (
 
   if (key) {
     inflightGetMap.set(key, runner);
-    runner.finally(() => {
-      inflightGetMap.delete(key);
-    });
+    runner.then(
+      () => {
+        inflightGetMap.delete(key);
+      },
+      () => {
+        inflightGetMap.delete(key);
+      },
+    );
   }
 
   return runner;
 };
 
 export const apiClientInstance = apiClient;
-

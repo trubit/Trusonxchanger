@@ -1,7 +1,7 @@
 import { create } from "zustand";
 import { currencyService } from "../services/currencyService";
 
-const getStoredLanguage = () => localStorage.getItem("language") || "en";
+const getStoredLanguage = () => "en";
 const getStoredCurrency = () => localStorage.getItem("currency") || "USD";
 
 export const useUiStore = create((set, get) => ({

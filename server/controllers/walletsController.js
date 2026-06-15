@@ -1,28 +1,21 @@
-import Wallet from "../models/Wallet.js";
+import * as walletService from "../services/walletService.js";
 
-// List wallets (admins see all, users see theirs).
-export const listWallets = async (req, res) => {
-  const filter = req.user?.role === "admin" ? {} : { user: req.user.id };
-  const wallets = await Wallet.find(filter).sort({ asset: 1 });
+export const getMyWallets = async (req, res) => {
+  const wallets = await walletService.getWallets(req.user.id);
   res.json({ wallets });
 };
 
-// Create a wallet for the logged-in user.
-export const createWallet = async (req, res) => {
-  const payload = { ...req.body, user: req.user.id };
-  const wallet = await Wallet.create(payload);
-  res.status(201).json({ wallet });
+export const deposit = async (req, res) => {
+  const { wallet, transaction } = await walletService.deposit(req.user.id, req.body);
+  res.status(200).json({ wallet, transaction });
 };
 
-// Update a wallet by ID.
-export const updateWallet = async (req, res) => {
-  const wallet = await Wallet.findByIdAndUpdate(req.params.id, req.body, {
-    new: true,
-    runValidators: true,
-  });
-  if (!wallet) {
-    return res.status(404).json({ message: "Wallet not found." });
-  }
-  return res.json({ wallet });
-}; 
+export const withdraw = async (req, res) => {
+  const { wallet, transaction } = await walletService.requestWithdrawal(req.user.id, req.body);
+  res.status(200).json({ wallet, transaction });
+};
 
+export const getMyTransactions = async (req, res) => {
+  const result = await walletService.getTransactions(req.user.id, req.query);
+  res.json(result);
+};

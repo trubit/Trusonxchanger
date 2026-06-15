@@ -61,6 +61,22 @@ const MainHeader = () => {
             </Nav.Link>
             <Nav.Link
               as={NavLink}
+              to="/Futures"
+              className="tx-main-link"
+              onClick={() => setExpanded(false)}
+            >
+              Futures
+            </Nav.Link>
+            <Nav.Link
+              as={NavLink}
+              to="/Spot"
+              className="tx-main-link"
+              onClick={() => setExpanded(false)}
+            >
+              Sport
+            </Nav.Link>
+            <Nav.Link
+              as={NavLink}
               to="/subscription"
               className="tx-main-link"
               onClick={() => setExpanded(false)}

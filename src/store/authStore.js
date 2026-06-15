@@ -37,6 +37,9 @@ export const useAuthStore = create((set) => ({
     });
     try {
       const payload = await authService.login({ email, password });
+      if (!payload?.token || !payload?.user) {
+        throw new Error("Invalid server response. Please try again.");
+      }
       localStorage.setItem("token", payload.token);
       localStorage.setItem("user", JSON.stringify(payload.user));
       set({

@@ -1,8 +1,6 @@
 import { useState } from "react";
-import { Card, Form, Button, Alert, Spinner } from "react-bootstrap";
+import { Form, Button, Alert, Spinner } from "react-bootstrap";
 import { Link } from "react-router-dom";
-import ToggleTheme from "../Components/common/toggleTheme";
-import AuthBranding from "../Components/auth/authBranding";
 import "../styles/login.css";
 import { requestPasswordReset } from "../services/api/auth";
 
@@ -37,82 +35,59 @@ const ForgotPassword = () => {
   };
 
   return (
-    <div className="position-relative min-vh-100">
-      <ToggleTheme />
-      <div className="container d-flex flex-column flex-lg-row gap-5 align-items-lg-start justify-content-center">
-        <AuthBranding />
+    <section className="tx-login-page">
+      <div className="tx-login-bg" aria-hidden="true" />
+      <main className="tx-login-main">
+        <article className="tx-login-card" aria-labelledby="tx-forgot-title">
+          <header className="tx-login-head">
+            <h1 id="tx-forgot-title">Forgot Password</h1>
+            <p>Enter your email and we&apos;ll send a reset link.</p>
+          </header>
 
-        <div className="d-flex align-items-center justify-content-center p-3 main-login-background">
-          <div className="login-background">
-            <Card
-              className="border-0 shadow-xl overflow-hidden"
-              id="form-login"
+          {error && <Alert variant="danger" className="tx-login-alert">{error}</Alert>}
+          {success && <Alert variant="success" className="tx-login-alert">{success}</Alert>}
+
+          <Form onSubmit={handleSubmit} noValidate>
+            <Form.Group className="tx-login-group" controlId="tx-forgot-email">
+              <Form.Label>Email address</Form.Label>
+              <Form.Control
+                type="email"
+                name="email"
+                autoComplete="email"
+                placeholder="name@example.com"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                disabled={isLoading}
+              />
+            </Form.Group>
+
+            <Button
+              type="submit"
+              className="tx-login-submit"
+              disabled={isLoading}
             >
-              <Card.Body className="p-4 p-md-5">
-                <h3 className="text-center fw-bold mb-2">Forgot Password</h3>
-                <p className="text-center mb-4 mb-md-5">
-                  Enter your email and we&apos;ll send a reset link.
-                </p>
+              {isLoading ? (
+                <>
+                  <Spinner
+                    as="span"
+                    animation="border"
+                    size="sm"
+                    className="me-2"
+                  />
+                  Sending...
+                </>
+              ) : (
+                "Send reset link"
+              )}
+            </Button>
+          </Form>
 
-                {error && (
-                  <Alert variant="danger" dismissible>
-                    {error}
-                  </Alert>
-                )}
-                {success && <Alert variant="success">{success}</Alert>}
-
-                <Form onSubmit={handleSubmit}>
-                  <Form.Group className="mb-4">
-                    <Form.Label className="fw-medium">Email address</Form.Label>
-                    <Form.Control
-                      type="email"
-                      placeholder="name@example.com"
-                      value={email}
-                      size="md"
-                      onChange={(e) => setEmail(e.target.value)}
-                      disabled={isLoading}
-                      className="form-control-email"
-                    />
-                  </Form.Group>
-
-                  <Button
-                    variant="success"
-                    size="lg"
-                    className="w-100 fw-bold button-form"
-                    type="submit"
-                    disabled={isLoading}
-                  >
-                    {isLoading ? (
-                      <>
-                        <Spinner
-                          as="span"
-                          animation="border"
-                          size="sm"
-                          className="me-2"
-                        />
-                        Sending...
-                      </>
-                    ) : (
-                      "Send reset link"
-                    )}
-                  </Button>
-
-                  <div className="text-center mt-4 small">
-                    Remembered your password? &nbsp;&nbsp;
-                    <Link
-                      to="/login"
-                      className="text-success fw-medium text-decoration-none"
-                    >
-                      Login
-                    </Link>
-                  </div>
-                </Form>
-              </Card.Body>
-            </Card>
-          </div>
-        </div>
-      </div>
-    </div>
+          <p className="tx-login-footer">
+            Remembered your password? <Link to="/login">Sign in</Link>
+          </p>
+        </article>
+      </main>
+    </section>
   );
 };
 

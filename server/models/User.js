@@ -11,7 +11,7 @@ const UserSchema = new mongoose.Schema(
       type: String,
       // Password hash is required only for local (email/password) users.
       required: function requiredPasswordHash() {
-        return this.authProvider !== "google";
+        return this.authProvider === "local";
       },
       select: false,
     },
@@ -35,8 +35,14 @@ const UserSchema = new mongoose.Schema(
     emailVerifyCodeExpires: { type: Date },
     // Authorization role for access control.
     role: { type: String, enum: ["user", "admin"], default: "user" },
-    // Contact phone (optional).
-    phone: { type: String, default: "" },
+    // Contact phone is required for local (email/password) account creation.
+    phone: {
+      type: String,
+      default: "",
+      required: function requiredPhone() {
+        return this.authProvider === "local";
+      },
+    },
     // Referral code used during signup (optional).
     referralId: { type: String, default: "" },
     // Account status controls whether user can log in.

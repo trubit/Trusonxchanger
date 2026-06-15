@@ -7,6 +7,7 @@ const BlogUpdateForm = ({
   visiblePosts,
   activePost,
   onActivatePost,
+  onSaveSuccess,
 }) => {
   const {
     editingId,
@@ -14,6 +15,7 @@ const BlogUpdateForm = ({
     uploadError,
     saveError,
     saving,
+    uploadingImage,
     deleting,
     imageUrlValue,
     handleSelectChange,
@@ -28,6 +30,7 @@ const BlogUpdateForm = ({
     visiblePosts,
     activePost,
     onActivatePost,
+    onSaveSuccess,
   });
 
   return (
@@ -111,32 +114,35 @@ const BlogUpdateForm = ({
         </label>
 
         <label className="blogs-field blogs-field-full">
-          Or Upload Image (max {MAX_IMAGE_SIZE_MB}MB)
+          Upload blog image (optional)
           <input
             type="file"
             accept="image/*"
             onChange={handleImageUpload}
+            disabled={uploadingImage}
           />
-          {formData.image ? (
-            <div className="blogs-image-preview">
-              <img src={formData.image} alt="Preview" />
-              <Button
-                type="button"
-                variant="outline-light"
-                size="sm"
-                onClick={handleRemoveImage}
-              >
-                Remove image
-              </Button>
-            </div>
-          ) : null}
+          <small className="blogs-form-subtitle">
+            Upload a local image (max {MAX_IMAGE_SIZE_MB} MB). This stores the file on the server.
+            {uploadingImage ? " Uploading..." : ""}
+          </small>
+        </label>
+
+        {formData.image ? (
+          <div className="blogs-image-preview blogs-field-full">
+            <img src={formData.image} alt={formData.imageAlt || "Blog preview"} />
+            <Button
+              type="button"
+              variant="outline-light"
+              onClick={handleRemoveImage}
+            >
+              Remove image
+            </Button>
+          </div>
+        ) : null}
+
         {uploadError ? (
-          <div className="blogs-image-error">{uploadError}</div>
+          <div className="blogs-image-error blogs-field-full">{uploadError}</div>
         ) : null}
-        {saveError ? (
-          <div className="blogs-image-error">{saveError}</div>
-        ) : null}
-      </label>
 
         <label className="blogs-field blogs-field-full">
           Image alt text (optional)
@@ -148,9 +154,19 @@ const BlogUpdateForm = ({
           />
         </label>
 
+        {saveError ? (
+          <div className="blogs-image-error blogs-field-full">{saveError}</div>
+        ) : null}
+
         <div className="blogs-form-actions">
-          <Button type="submit" variant="success" disabled={saving}>
-            {saving ? "Saving..." : editingId === "new" ? "Add post" : "Update post"}
+          <Button type="submit" variant="success" disabled={saving || uploadingImage}>
+            {saving || uploadingImage
+              ? uploadingImage
+                ? "Uploading image..."
+                : "Saving..."
+              : editingId === "new"
+                ? "Add post"
+                : "Update post"}
           </Button>
           {activePost ? (
             <Button

@@ -1,129 +1,242 @@
-/* src/components/LangCurrencyModal.css */
-
-/* === Button (language/currency trigger) === */
 .tx-lang-currency-btn {
-  background: linear-gradient(135deg, #1e293b 0%, #111827 100%);
-  border: 1px solid rgba(51, 65, 85, 0.6);
-  color: #e2e8f0;
+  align-items: center;
+  background:
+    linear-gradient(145deg, rgba(0, 214, 160, 0.14), rgba(0, 214, 160, 0.04)),
+    linear-gradient(180deg, rgba(16, 24, 32, 0.96), rgba(10, 16, 22, 0.98));
+  border: 1px solid rgba(0, 214, 160, 0.34);
+  border-radius: 999px;
+  box-shadow:
+    0 12px 24px rgba(0, 0, 0, 0.32),
+    inset 0 1px 0 rgba(255, 255, 255, 0.11);
+  color: #e8f5fb;
   display: inline-flex;
-  font-weight: 500;
-  justify-content: center;
-  letter-spacing: 0.5px;
-  min-height: 40px;
-  min-width: 124px;
-  transition: all 0.35s ease;
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.45);
+  font-size: 0.84rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  min-height: 38px;
+  min-width: 126px;
+  transition:
+    border-color 0.24s ease,
+    box-shadow 0.24s ease,
+    transform 0.24s ease;
 }
 
 .tx-lang-currency-btn:hover,
 .tx-lang-currency-btn:focus-visible {
+  border-color: rgba(111, 255, 214, 0.78);
+  box-shadow:
+    0 16px 28px rgba(0, 0, 0, 0.4),
+    0 0 0 1px rgba(0, 214, 160, 0.15),
+    inset 0 1px 0 rgba(255, 255, 255, 0.14);
+  color: #ffffff;
   transform: translateY(-2px);
-  box-shadow: 0 14px 32px rgba(0, 0, 0, 0.55);
-  background: linear-gradient(135deg, #334155 0%, #1e293b 100%);
 }
 
-/* === Modal === */
+.tx-lc-pill {
+  color: #d7fcef;
+  font-weight: 800;
+}
+
+.tx-lc-separator {
+  color: rgba(209, 226, 236, 0.64);
+  font-weight: 600;
+}
+
 .dark-modal .modal-dialog {
-  max-width: 420px; /* elegant narrow width */
+  max-width: 560px;
 }
 
 .dark-modal .modal-content {
-  background: linear-gradient(180deg, #0f172a 0%, #020617 100%);
-  border: 1px solid #334155;
-  border-radius: 20px;
-  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.75);
+  background:
+    radial-gradient(760px 240px at 8% -20%, rgba(0, 214, 160, 0.12), rgba(0, 214, 160, 0) 64%),
+    linear-gradient(180deg, rgba(15, 22, 31, 0.98), rgba(9, 14, 20, 0.99));
+  border: 1px solid rgba(0, 214, 160, 0.26);
+  border-radius: 26px;
+  box-shadow:
+    0 34px 70px rgba(0, 0, 0, 0.6),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
   overflow: hidden;
-  backdrop-filter: blur(10px);
 }
 
-/* Header */
 .dark-modal .modal-header {
-  background: transparent;
-  border-bottom: none;
-  padding: 1.5rem 1.75rem 0.75rem;
+  background: transparent !important;
+  border-bottom: 1px solid rgba(141, 168, 182, 0.2) !important;
+  padding: 1.25rem 1.35rem 1rem;
+  position: relative;
+}
+
+.dark-modal .modal-header::after {
+  background: linear-gradient(90deg, rgba(0, 214, 160, 0.74), rgba(0, 214, 160, 0));
+  content: "";
+  height: 1px;
+  left: 0;
+  position: absolute;
+  right: 42%;
+  top: 0;
 }
 
 .dark-modal .modal-title {
-  color: #e2e8f0;
-  font-weight: 600;
-  font-size: 1.35rem;
-  letter-spacing: -0.3px;
+  color: #f2f8fd;
+  font-family: "Space Grotesk", "Manrope", sans-serif;
+  font-size: 1.75rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.15;
 }
 
-/* Close button */
 .dark-modal .btn-close {
-  filter: invert(0.9);
-  opacity: 0.7;
-  transition: opacity 0.2s;
-}
-
-.dark-modal .btn-close:hover {
-  opacity: 1;
-}
-
-/* Tabs */
-.dark-modal .nav-tabs {
-  border-bottom: 1px solid #334155;
-  background: rgba(15, 23, 42, 0.6);
-}
-
-.dark-modal .nav-link {
-  color: #94a3b8;
-  font-weight: 500;
-  border: none;
-  padding: 14px 24px;
-  border-radius: 0;
-  transition: all 0.25s ease;
-}
-
-.dark-modal .nav-link:hover {
-  color: #cbd5e1;
-}
-
-.dark-modal .nav-link.active {
-  color: #22c55e;
-  border-bottom: 3px solid #22c55e;
-  background: transparent;
-  font-weight: 600;
-}
-
-/* List items */
-.dark-modal .list-group-item-action {
-  background: transparent;
-  border: none;
-  color: #e2e8f0;
-  padding: 1.1rem 1.5rem;
-  margin: 0.25rem 0;
-  border-radius: 12px;
-  transition: all 0.25s ease;
-  cursor: pointer;
-}
-
-.dark-modal .list-group-item-action:hover {
-  background: rgba(51, 65, 85, 0.4) !important;
-  transform: translateX(6px);
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
-}
-
-.dark-modal .list-group-item-action.active,
-.dark-modal .list-group-item-action:active {
-  background: rgba(34, 197, 94, 0.18) !important;
-  color: #22c55e;
-  font-weight: 600;
-}
-
-/* Rate text */
-.dark-modal .text-muted.small {
-  font-size: 0.85rem;
+  filter: invert(0.96) saturate(0.2);
   opacity: 0.75;
+  transition:
+    opacity 0.22s ease,
+    transform 0.22s ease;
 }
 
-/* Loading / Error states */
-.dark-modal .text-muted {
-  color: #94a3b8 !important;
+.dark-modal .btn-close:hover,
+.dark-modal .btn-close:focus-visible {
+  opacity: 1;
+  transform: rotate(90deg);
 }
 
-.dark-modal .text-danger.small {
-  font-size: 0.85rem;
-  color: #f87171 !important;
+.tx-lc-modal-body {
+  background: transparent !important;
+}
+
+.dark-modal .tx-lc-tabs.nav-tabs {
+  background:
+    linear-gradient(180deg, rgba(14, 22, 32, 0.92), rgba(11, 18, 27, 0.95));
+  border-bottom: 1px solid rgba(138, 163, 179, 0.22);
+  padding: 0.44rem 0.52rem;
+}
+
+.dark-modal .tx-lc-tabs .nav-link {
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 12px;
+  color: #a9bdcc;
+  font-size: 0.92rem;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  margin: 0 0.18rem;
+  padding: 0.66rem 0.85rem;
+  transition:
+    color 0.22s ease,
+    background-color 0.22s ease,
+    border-color 0.22s ease;
+}
+
+.dark-modal .tx-lc-tabs .nav-link:hover,
+.dark-modal .tx-lc-tabs .nav-link:focus-visible {
+  color: #d6e6f1;
+}
+
+.dark-modal .tx-lc-tabs .nav-link.active {
+  background:
+    linear-gradient(145deg, rgba(0, 214, 160, 0.2), rgba(0, 214, 160, 0.08));
+  border-color: rgba(0, 214, 160, 0.4);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  color: #abf9dd;
+}
+
+.dark-modal .tab-content {
+  background: transparent;
+  min-height: 336px;
+  padding: 0.54rem;
+}
+
+.tx-lc-list {
+  background: transparent;
+  gap: 0.42rem;
+}
+
+.dark-modal .tx-lc-item.list-group-item-action {
+  align-items: center;
+  background:
+    linear-gradient(160deg, rgba(255, 255, 255, 0.04), rgba(255, 255, 255, 0)),
+    linear-gradient(180deg, rgba(19, 28, 37, 0.92), rgba(14, 21, 28, 0.95));
+  border: 1px solid rgba(141, 167, 182, 0.18) !important;
+  border-radius: 14px !important;
+  color: #e2edf5 !important;
+  display: flex;
+  font-size: 1.08rem;
+  font-weight: 600;
+  gap: 0.75rem;
+  justify-content: space-between;
+  line-height: 1.35;
+  margin: 0;
+  padding: 0.86rem 0.95rem !important;
+  transition:
+    border-color 0.22s ease,
+    box-shadow 0.22s ease,
+    transform 0.22s ease;
+}
+
+.dark-modal .tx-lc-item:hover {
+  border-color: rgba(0, 214, 160, 0.36) !important;
+  box-shadow:
+    0 10px 18px rgba(0, 0, 0, 0.28),
+    0 0 0 1px rgba(0, 214, 160, 0.11);
+  transform: translateY(-1px);
+}
+
+.dark-modal .tx-lc-item.active,
+.dark-modal .tx-lc-item:active {
+  background:
+    linear-gradient(145deg, rgba(0, 214, 160, 0.22), rgba(0, 214, 160, 0.1)),
+    linear-gradient(180deg, rgba(18, 34, 37, 0.95), rgba(13, 24, 29, 0.98));
+  border-color: rgba(69, 247, 194, 0.5) !important;
+  color: #ebfff8 !important;
+  font-weight: 700;
+  box-shadow:
+    0 12px 22px rgba(0, 0, 0, 0.34),
+    0 0 0 1px rgba(0, 214, 160, 0.16);
+}
+
+.tx-lc-item-name,
+.tx-lc-currency-name {
+  color: inherit;
+  font-size: 1.02rem;
+  font-weight: inherit;
+}
+
+.tx-lc-item-code {
+  color: #a7f8db;
+  font-size: 0.88rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+.tx-lc-rate {
+  color: #9bb0bf !important;
+  font-size: 0.79rem !important;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+.dark-modal .tx-lc-item.active .tx-lc-rate {
+  color: #c3ffe9 !important;
+}
+
+@media (max-width: 575px) {
+  .dark-modal .modal-dialog {
+    margin: 0.92rem;
+    max-width: calc(100% - 1.84rem);
+  }
+
+  .dark-modal .modal-content {
+    border-radius: 20px;
+  }
+
+  .dark-modal .modal-title {
+    font-size: 1.42rem;
+  }
+
+  .dark-modal .tab-content {
+    min-height: 300px;
+  }
+
+  .dark-modal .tx-lc-item.list-group-item-action {
+    font-size: 0.97rem;
+    padding: 0.8rem 0.82rem !important;
+  }
 }

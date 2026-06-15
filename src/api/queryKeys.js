@@ -19,5 +19,20 @@ export const queryKeys = {
     marketState: (symbol) => ["trade", "market-state", symbol],
     myMarketState: (symbol) => ["trade", "my-market-state", symbol],
   },
+  dashboard: {
+    summary: ["dashboard", "summary"],
+  },
+  wallet: {
+    myWallets:       ["wallet", "my-wallets"],
+    allTransactions: ["wallet", "transactions"],
+    transactions:    (params = {}) => ["wallet", "transactions", params],
+  },
+  orders: {
+    open:    (params = {}) => ["orders", "open",    params],
+    history: (params = {}) => ["orders", "history", params],
+  },
+  assets: {
+    all: ["assets", "supported"],
+  },
 };
 

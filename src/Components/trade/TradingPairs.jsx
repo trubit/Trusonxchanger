@@ -1,4 +1,6 @@
 import React from "react";
+import { useAppContext } from "../common/AppContext";
+import { formatPriceAmount } from "../../utils/currencyFormat";
 
 const TradingPairs = ({
   pairs = [],
@@ -7,6 +9,7 @@ const TradingPairs = ({
   onSearch,
   onSelect,
 }) => {
+  const { currency, rates } = useAppContext();
   const filteredPairs = pairs.filter((p) =>
     p.symbol.toLowerCase().includes(search.toLowerCase())
   );
@@ -25,7 +28,7 @@ const TradingPairs = ({
       </div>
       <div className="tx-pairs-head">
         <span>Pair</span>
-        <span>Price</span>
+        <span>{`Price (${currency})`}</span>
         <span>Change</span>
       </div>
       <div className="tx-pairs-list">
@@ -38,7 +41,7 @@ const TradingPairs = ({
               onClick={() => onSelect(pair.symbol)}
             >
               <span className="fw-bold">{pair.symbol}</span>
-              <span>{Number(pair.lastPrice).toLocaleString()}</span>
+              <span>{formatPriceAmount(pair.lastPrice, currency, rates)}</span>
               <span className={isUp ? "tx-change-up" : "tx-change-down"}>
                 {isUp ? "+" : ""}{pair.change24h}%
               </span>

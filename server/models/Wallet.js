@@ -14,6 +14,9 @@ const WalletSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
+// One wallet per asset per user.
+WalletSchema.index({ user: 1, asset: 1 }, { unique: true });
+
 WalletSchema.set("toJSON", {
   virtuals: true,
   versionKey: false,

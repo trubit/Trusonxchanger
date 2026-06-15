@@ -1,372 +1,360 @@
-.signup-page.auth-shell {
-  background:
-    radial-gradient(
-      760px 460px at 4% 10%,
-      rgba(0, 214, 160, 0.14),
-      rgba(0, 214, 160, 0) 68%
-    ),
-    radial-gradient(
-      720px 420px at 100% 92%,
-      rgba(71, 104, 121, 0.2),
-      rgba(71, 104, 121, 0) 70%
-    ),
-    #0a1015;
-  color: #e6eef6;
-}
-
-.signup-page .auth-stack {
-  gap: 1.5rem !important;
-}
-
-.signup-page .main-container-cards {
-  max-width: 480px;
-  width: 100%;
-}
-
-.signup-page .auth-panel.main-login-background {
-  background:
-    linear-gradient(165deg, rgba(255, 255, 255, 0.04), rgba(255, 255, 255, 0)),
-    linear-gradient(180deg, rgba(13, 20, 27, 0.95), rgba(9, 15, 21, 0.98));
-  border: 1px solid rgba(139, 164, 179, 0.2);
-  border-radius: 24px;
-  box-shadow:
-    0 24px 46px rgba(0, 0, 0, 0.38),
-    inset 0 1px 0 rgba(255, 255, 255, 0.08);
-  width: 100%;
-}
-
-.signup-page .login-background {
-  width: 100%;
-}
-
-.signup-page #card-border.auth-card {
-  background:
-    linear-gradient(160deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0)),
-    linear-gradient(180deg, #111920, #0d141b);
-  border: 1px solid rgba(139, 164, 178, 0.2) !important;
-  border-radius: 18px;
-  box-shadow:
-    0 20px 38px rgba(0, 0, 0, 0.34),
-    inset 0 1px 0 rgba(255, 255, 255, 0.08);
-}
-
-.signup-page .auth-title {
-  color: #f3f8fc;
-  font-family: "Space Grotesk", "Manrope", sans-serif;
-  font-size: clamp(1.45rem, 1vw + 1.1rem, 1.82rem);
-  letter-spacing: -0.01em;
-}
-
-.signup-page .auth-subtitle {
-  color: #9bb0be;
-  font-size: 0.9rem;
-  line-height: 1.55;
-}
-
-.signup-page .auth-social-block {
-  display: flex;
-  flex-direction: column;
-  gap: 0.9rem;
-  margin-bottom: 1.1rem;
-  width: 100%;
-}
-
-.signup-page .auth-social-block.compact-gap {
-  gap: 0.6rem;
-}
-
-.signup-page .auth-divider {
-  align-items: center;
-  color: #8fa5b4;
-  display: flex;
-  font-size: 0.79rem;
-  gap: 0.6rem;
-  letter-spacing: 0.01em;
-  text-transform: none;
-}
-
-.signup-page .auth-divider::before,
-.signup-page .auth-divider::after {
-  background: linear-gradient(
-    90deg,
-    rgba(0, 214, 160, 0),
-    rgba(0, 214, 160, 0.46),
-    rgba(0, 214, 160, 0)
-  );
-  content: "";
-  flex: 1;
-  height: 1px;
-}
-
-.signup-page .form-label {
-  color: #bfd0db;
-  font-size: 0.84rem;
-  font-weight: 600;
-  letter-spacing: 0.02em;
-}
-
-.signup-page .form-control-email,
-.signup-page .form-control-password,
-.signup-page .input-group-text {
-  background: rgba(14, 22, 29, 0.9);
-  border: 1px solid rgba(138, 163, 178, 0.28);
-  color: #e8f1f8;
-}
-
-.signup-page .form-control-email,
-.signup-page .form-control-password {
-  border-radius: 0.72rem;
-  min-height: 42px;
-}
-
-.signup-page .form-control-password {
-  border-radius: 0.72rem 0 0 0.72rem;
-}
-
-.signup-page .input-group-text {
-  border-radius: 0 0.72rem 0.72rem 0;
-  cursor: pointer;
-}
-
-.signup-page .form-control-email::placeholder,
-.signup-page .form-control-password::placeholder {
-  color: #7f96a5;
-}
-
-.signup-page .form-control:focus,
-.signup-page .input-group-text:focus-within {
-  border-color: rgba(0, 214, 160, 0.7);
-  box-shadow: 0 0 0 0.2rem rgba(0, 214, 160, 0.16);
-}
-
-.signup-page .auth-terms {
-  color: #9bb0be;
-  font-size: 0.8rem;
-  line-height: 1.52;
-}
-
-.signup-page .auth-terms .form-check-input {
-  background-color: rgba(12, 20, 27, 0.92);
-  border-color: rgba(138, 163, 178, 0.4);
-}
-
-.signup-page .auth-terms .form-check-input:checked {
-  background-color: #00d6a0;
-  border-color: #00d6a0;
-}
-
-.signup-page .button-form {
-  background: linear-gradient(145deg, rgba(0, 214, 160, 0.4), rgba(0, 214, 160, 0.16));
-  border: 1px solid rgba(0, 214, 160, 0.58);
-  border-radius: 0.74rem;
-  box-shadow:
-    0 14px 28px rgba(0, 101, 77, 0.34),
-    inset 0 1px 0 rgba(255, 255, 255, 0.2);
-  color: #edfffa;
-  letter-spacing: 0.01em;
-}
-
-.signup-page .button-form:hover,
-.signup-page .button-form:focus-visible {
-  background: linear-gradient(145deg, rgba(0, 214, 160, 0.52), rgba(0, 214, 160, 0.22));
-  border-color: rgba(98, 255, 206, 0.82);
-  color: #ffffff;
-}
-
-.signup-page .auth-footer-text {
-  color: #97acbb !important;
-}
-
-.signup-page .auth-footer-link {
-  color: #9df4d6 !important;
-}
-
-.signup-page .auth-footer-link:hover,
-.signup-page .auth-footer-link:focus-visible {
-  color: #cbffe9 !important;
-}
-
-.signup-page .google-auth-wrapper {
-  align-self: stretch;
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-  margin: 0 auto;
-  max-width: 100%;
-  width: 100%;
-}
-
-.signup-page .google-auth-card {
-  align-items: stretch;
-  background: linear-gradient(145deg, rgba(12, 21, 27, 0.96), rgba(15, 27, 22, 0.92));
-  border: 1px solid rgba(0, 214, 160, 0.28);
-  border-radius: 0.95rem;
-  box-shadow: 0 14px 28px rgba(0, 0, 0, 0.32);
-  display: flex;
-  flex-direction: column;
-  gap: 0.62rem;
+.tx-signup-page {
+  position: relative;
+  min-height: 100vh;
   overflow: hidden;
-  padding: 0.92rem 1rem;
-  width: 100%;
+  background: #0b0f14;
 }
 
-.signup-page .google-auth-card-header {
-  align-items: center;
-  color: #e4eff6;
-  display: flex;
-  font-size: 0.87rem;
-  font-weight: 600;
-  gap: 0.6rem;
-  margin-bottom: 0.4rem;
+.tx-signup-bg {
+  position: absolute;
+  inset: -14%;
+  background:
+    radial-gradient(42% 32% at 10% 8%, rgba(0, 255, 136, 0.16), rgba(0, 255, 136, 0)),
+    radial-gradient(34% 30% at 86% 18%, rgba(0, 255, 136, 0.11), rgba(0, 255, 136, 0)),
+    radial-gradient(48% 45% at 45% 95%, rgba(7, 84, 58, 0.21), rgba(7, 84, 58, 0)),
+    linear-gradient(165deg, #05080d 0%, #090d13 44%, #0b1118 100%);
+  animation: tx-signup-ambient 20s ease-in-out infinite alternate;
+  pointer-events: none;
 }
 
-.signup-page .google-auth-pill {
-  background: rgba(0, 214, 160, 0.2);
-  border-radius: 999px;
-  color: #ddfff4;
-  font-size: 0.64rem;
+.tx-signup-main {
+  position: relative;
+  z-index: 1;
+  min-height: 100vh;
+  padding: clamp(1rem, 3vw, 2.5rem);
+  display: grid;
+  place-items: center;
+}
+
+.tx-signup-card {
+  width: min(100%, 42rem);
+  border-radius: 1.4rem;
+  border: 1px solid rgba(135, 180, 160, 0.28);
+  background:
+    linear-gradient(155deg, rgba(255, 255, 255, 0.065), rgba(255, 255, 255, 0.01)),
+    rgba(10, 16, 23, 0.78);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  box-shadow:
+    0 36px 58px rgba(0, 0, 0, 0.46),
+    inset 0 1px 0 rgba(255, 255, 255, 0.09),
+    0 0 0 1px rgba(0, 255, 136, 0.08);
+  padding: clamp(1.1rem, 2.4vw, 1.9rem);
+  animation:
+    tx-signup-fade 520ms ease-out,
+    tx-signup-float 7s ease-in-out infinite 620ms;
+}
+
+.tx-signup-head h1 {
+  margin: 0;
+  font-family: "Space Grotesk", "Manrope", sans-serif;
+  font-size: clamp(1.38rem, 1.5vw, 1.74rem);
   font-weight: 700;
-  letter-spacing: 0.08em;
-  padding: 0.2rem 0.5rem;
+  line-height: 1.2;
+  letter-spacing: -0.014em;
+  color: #f4fbff;
+}
+
+.tx-signup-head p {
+  margin: 0.65rem 0 0;
+  color: #9fb0bc;
+  font-size: clamp(0.92rem, 1vw, 1rem);
+  line-height: 1.62;
+}
+
+.tx-signup-alert {
+  margin: 0.95rem 0;
+}
+
+.tx-signup-google {
+  margin-top: 1rem;
+}
+
+.tx-signup-page .google-auth-card {
+  background:
+    linear-gradient(145deg, rgba(19, 27, 34, 0.92), rgba(12, 20, 26, 0.92));
+  border: 1px solid rgba(101, 175, 145, 0.35);
+  border-radius: 0.95rem;
+}
+
+.tx-signup-page .google-auth-pill {
+  background: rgba(0, 255, 136, 0.18);
+  color: #dbfff0;
+}
+
+.tx-signup-page .google-auth-card-header,
+.tx-signup-page .google-auth-loading,
+.tx-signup-page .google-auth-fallback {
+  color: #aec0cd;
+}
+
+.tx-signup-divider {
+  margin: 1rem 0 1.12rem;
+  display: flex;
+  align-items: center;
+  gap: 0.72rem;
+  color: #8fa0ac;
+  font-size: 0.78rem;
+  letter-spacing: 0.045em;
   text-transform: uppercase;
 }
 
-.signup-page .google-button-shell {
-  display: flex;
-  justify-content: center;
-  min-height: 48px;
-  width: 100%;
+.tx-signup-divider::before,
+.tx-signup-divider::after {
+  content: "";
+  height: 1px;
+  flex: 1;
+  background: linear-gradient(90deg, rgba(0, 255, 136, 0), rgba(0, 255, 136, 0.6), rgba(0, 255, 136, 0));
 }
 
-.signup-page .google-button-shell > div {
-  width: 100% !important;
+.tx-signup-grid {
+  display: grid;
+  gap: 0.92rem;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
-.signup-page .google-button-shell iframe {
-  width: 100% !important;
+.tx-signup-group {
+  margin-bottom: 0.95rem;
 }
 
-.signup-page .google-auth-button {
-  align-items: center;
-  background: linear-gradient(135deg, #12362a, #0f251f);
-  border: 1px solid rgba(34, 197, 94, 0.35);
-  border-radius: 999px;
-  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.24);
-  color: #e2e8f0;
-  display: inline-flex;
+.tx-signup-group .form-label {
+  margin-bottom: 0.4rem;
+  color: #bccad4;
+  font-size: 0.84rem;
+  letter-spacing: 0.028em;
   font-weight: 600;
-  gap: 0.6rem;
-  justify-content: center;
-  min-height: 48px;
-  padding: 0.65rem 1rem;
+}
+
+.tx-signup-group .form-control {
+  min-height: 2.8rem;
+  border-radius: 0.85rem;
+  border: 1px solid rgba(135, 161, 176, 0.34);
+  background: rgba(13, 21, 28, 0.88);
+  color: #f0f7fc;
+  transition:
+    border-color 160ms ease,
+    box-shadow 160ms ease,
+    background-color 160ms ease;
+}
+
+.tx-signup-group .form-control::placeholder {
+  color: #738a99;
+}
+
+.tx-signup-group .form-control:focus {
+  border-color: rgba(0, 255, 136, 0.72);
+  box-shadow: 0 0 0 0.2rem rgba(0, 255, 136, 0.18);
+  background: rgba(14, 22, 30, 0.94);
+  color: #f3f9fd;
+}
+
+.tx-signup-group .input-group > .form-control {
+  border-radius: 0.85rem 0 0 0.85rem;
+}
+
+.tx-signup-password-toggle {
+  min-width: 2.85rem;
+  border-radius: 0 0.85rem 0.85rem 0;
+  border: 1px solid rgba(135, 161, 176, 0.34);
+  border-left: 0;
+  background: rgba(13, 21, 28, 0.88);
+  color: #9fb2bf;
+}
+
+.tx-signup-password-toggle:hover,
+.tx-signup-password-toggle:focus-visible {
+  background: rgba(16, 27, 35, 0.92);
+  color: #e4fdf2;
+  border-color: rgba(0, 255, 136, 0.58);
+  box-shadow: none;
+}
+
+.tx-signup-strength {
+  margin-top: 0.52rem;
+}
+
+.tx-signup-strength-bar {
+  height: 0.43rem;
+  border-radius: 999px;
+  background: rgba(130, 152, 166, 0.28);
+  overflow: hidden;
+}
+
+.tx-signup-strength-fill {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  transition: width 180ms ease, background-color 180ms ease;
+  width: 0;
+}
+
+.tx-signup-strength-1 {
+  width: 33%;
+  background: #ff7373;
+}
+
+.tx-signup-strength-2 {
+  width: 66%;
+  background: #f2c869;
+}
+
+.tx-signup-strength-3 {
   width: 100%;
+  background: #00dc7f;
 }
 
-.signup-page .google-auth-icon {
-  align-items: center;
-  background: linear-gradient(135deg, #22c55e, #10b981);
-  border-radius: 50%;
-  color: #fff;
-  display: inline-flex;
-  font-size: 0.85rem;
-  font-weight: 700;
-  height: 28px;
-  justify-content: center;
-  width: 28px;
-}
-
-.signup-page .google-auth-loading,
-.signup-page .google-auth-fallback {
-  color: #89a1b1;
+.tx-signup-strength-label {
+  margin-top: 0.38rem;
+  display: inline-block;
+  color: #96aab8;
   font-size: 0.78rem;
+}
+
+.tx-signup-checks {
+  margin: 0.2rem 0 1rem;
+  display: grid;
+  gap: 0.66rem;
+}
+
+.tx-signup-checks .form-check-input {
+  background-color: rgba(11, 18, 24, 0.95);
+  border-color: rgba(124, 154, 169, 0.44);
+}
+
+.tx-signup-checks .form-check-input:checked {
+  background-color: #00ca72;
+  border-color: #00ca72;
+}
+
+.tx-signup-checks .form-check-label {
+  color: #95a8b5;
+  font-size: 0.83rem;
+  line-height: 1.52;
+}
+
+.tx-signup-link-inline {
+  color: #8fffd0;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.tx-signup-link-inline:hover,
+.tx-signup-link-inline:focus-visible {
+  color: #c7ffea;
+  text-decoration: underline;
+}
+
+.tx-signup-check-error {
+  margin: -0.25rem 0 0.1rem 1.7rem;
+  color: #ff8d8d;
+  font-size: 0.77rem;
+}
+
+.tx-signup-submit {
+  width: 100%;
+  min-height: 2.95rem;
+  border: 1px solid rgba(0, 255, 136, 0.58);
+  border-radius: 0.9rem;
+  background: linear-gradient(145deg, rgba(0, 205, 117, 0.55), rgba(0, 155, 88, 0.4));
+  color: #f5fffb;
+  font-weight: 700;
+  letter-spacing: 0.012em;
+  box-shadow:
+    0 18px 32px rgba(1, 73, 45, 0.35),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  transition:
+    transform 160ms ease,
+    box-shadow 160ms ease,
+    border-color 160ms ease,
+    filter 160ms ease;
+}
+
+.tx-signup-submit:hover,
+.tx-signup-submit:focus-visible {
+  transform: translateY(-1px);
+  border-color: rgba(119, 255, 197, 0.9);
+  box-shadow:
+    0 22px 34px rgba(1, 73, 45, 0.4),
+    0 0 22px rgba(0, 255, 136, 0.2);
+  filter: brightness(1.04);
+}
+
+.tx-signup-submit:disabled {
+  opacity: 0.58;
+  cursor: not-allowed;
+}
+
+.tx-signup-footer {
+  margin: 1rem 0 0;
+  color: #97a9b5;
+  font-size: 0.88rem;
   text-align: center;
 }
 
-html.light .signup-page.auth-shell {
-  background:
-    radial-gradient(
-      760px 460px at 4% 10%,
-      rgba(0, 168, 123, 0.12),
-      rgba(0, 168, 123, 0) 68%
-    ),
-    radial-gradient(
-      700px 420px at 100% 94%,
-      rgba(90, 117, 131, 0.18),
-      rgba(90, 117, 131, 0) 70%
-    ),
-    #e7eef4;
-  color: #12202c;
+.tx-signup-footer a {
+  color: #92ffd2;
+  text-decoration: none;
+  font-weight: 600;
 }
 
-html.light .signup-page .auth-panel.main-login-background,
-html.light .signup-page #card-border.auth-card {
-  background:
-    linear-gradient(165deg, rgba(255, 255, 255, 0.95), rgba(243, 248, 252, 0.95));
-  border-color: rgba(135, 158, 173, 0.34) !important;
-  box-shadow:
-    0 18px 34px rgba(16, 24, 32, 0.12),
-    inset 0 1px 0 rgba(255, 255, 255, 0.9);
+.tx-signup-footer a:hover,
+.tx-signup-footer a:focus-visible {
+  color: #d5ffef;
+  text-decoration: underline;
 }
 
-html.light .signup-page .auth-title {
-  color: #0e1e2c;
+@keyframes tx-signup-fade {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
-html.light .signup-page .auth-subtitle,
-html.light .signup-page .form-label,
-html.light .signup-page .auth-footer-text,
-html.light .signup-page .auth-terms {
-  color: #405565 !important;
+@keyframes tx-signup-float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-3px);
+  }
 }
 
-html.light .signup-page .form-control-email,
-html.light .signup-page .form-control-password,
-html.light .signup-page .input-group-text {
-  background: rgba(255, 255, 255, 0.92);
-  border-color: rgba(131, 156, 172, 0.42);
-  color: #0f2231;
-}
-
-html.light .signup-page .form-control-email::placeholder,
-html.light .signup-page .form-control-password::placeholder {
-  color: #6f8797;
-}
-
-html.light .signup-page .auth-footer-link {
-  color: #0fa372 !important;
-}
-
-html.light .signup-page .google-auth-card {
-  background: linear-gradient(145deg, rgba(247, 252, 255, 0.96), rgba(238, 247, 251, 0.96));
-  border-color: rgba(111, 146, 163, 0.28);
-}
-
-html.light .signup-page .google-auth-card-header {
-  color: #1f3545;
+@keyframes tx-signup-ambient {
+  0% {
+    transform: translate3d(-1.2%, -1%, 0) scale(1);
+  }
+  100% {
+    transform: translate3d(1.4%, 1.2%, 0) scale(1.02);
+  }
 }
 
 @media (max-width: 991px) {
-  .signup-page .auth-stack {
-    align-items: center !important;
-    flex-direction: column !important;
+  .tx-signup-card {
+    width: min(100%, 36rem);
   }
 
-  .signup-page .main-container-cards {
-    max-width: 440px;
+  .tx-signup-grid {
+    grid-template-columns: 1fr;
   }
 }
 
-@media (max-width: 575px) {
-  .signup-page.auth-shell {
-    padding: 0.75rem 0.3rem !important;
+@media (max-width: 576px) {
+  .tx-signup-main {
+    padding: 0.9rem;
   }
 
-  .signup-page .auth-panel.main-login-background {
-    border-radius: 18px;
-    padding: 0.95rem !important;
+  .tx-signup-card {
+    width: min(100%, 100%);
+    border-radius: 1.08rem;
+    padding: 1rem 0.88rem;
   }
 
-  .signup-page #card-border.auth-card {
-    border-radius: 14px;
+  .tx-signup-divider {
+    font-size: 0.72rem;
   }
 }

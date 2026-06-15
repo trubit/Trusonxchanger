@@ -30,11 +30,13 @@ const transporter = mailerConfigured
     )
   : null;
 
+const SUPPORT_INBOX = "trusonxchanger@gmail.com";
+
 export const CONTACT_RECEIVER =
   process.env.CONTACT_RECEIVER ||
   process.env.SMTP_REPLY_TO ||
   process.env.SMTP_FROM_EMAIL ||
-  "trusonxchanger@gmail.com";
+  SUPPORT_INBOX;
 
 export const sendContactEmail = async ({ fromEmail, subject, text, html }) => {
   if (!transporter) {
@@ -50,6 +52,10 @@ export const sendContactEmail = async ({ fromEmail, subject, text, html }) => {
   await transporter.sendMail({
     from: fromAddress,
     to: CONTACT_RECEIVER,
+    cc:
+      CONTACT_RECEIVER.toLowerCase() === SUPPORT_INBOX
+        ? undefined
+        : SUPPORT_INBOX,
     replyTo: fromEmail,
     subject,
     text,

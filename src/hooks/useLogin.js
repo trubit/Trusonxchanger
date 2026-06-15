@@ -1,11 +1,17 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { loginUser } from "../services/api/auth";
+import { useAuthStore } from "../store/authStore";
 
-// Login state + submit handler used by the Login page.
+const REMEMBER_EMAIL_KEY = "tx_remember_email";
+
+const readRememberedEmail = () => {
+  if (typeof window === "undefined") return "";
+  return localStorage.getItem(REMEMBER_EMAIL_KEY) || "";
+};
+
 const useLogin = () => {
   const [showPassword, setShowPassword] = useState(false);
-  const [email, setEmail] = useState("");
+  const [email, setEmail] = useState(readRememberedEmail);
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
@@ -13,39 +19,30 @@ const useLogin = () => {
   const [needsVerification, setNeedsVerification] = useState(false);
 
   const navigate = useNavigate();
+  const storeLogin = useAuthStore((s) => s.login);
 
-  const togglePasswordVisibility = () => {
-    setShowPassword(!showPassword);
-    return;
-  };
+  const togglePasswordVisibility = () => setShowPassword((prev) => !prev);
 
-  // Sends credentials to the backend and stores the session token on success.
   const handleLogin = async (e) => {
     e.preventDefault();
-
     setError("");
     setSuccess("");
     setNeedsVerification(false);
     setIsLoading(true);
 
     try {
-      const data = await loginUser({ email, password });
-
-      localStorage.setItem("token", data.token);
-      localStorage.setItem("user", JSON.stringify(data.user));
-
+      await storeLogin({ email, password });
       setSuccess("Login successful!");
       navigate("/Dashboard");
     } catch (err) {
       const message = err.message || "Something went wrong. Try again.";
       setError(message);
-      if (message.toLowerCase().includes("email not verified")) {
-        setNeedsVerification(true);
-      }
+      setNeedsVerification(message.toLowerCase().includes("email not verified"));
     } finally {
       setIsLoading(false);
     }
   };
+
   return {
     email,
     setEmail,

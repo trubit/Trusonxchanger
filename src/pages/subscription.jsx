@@ -48,17 +48,14 @@ const Subscription = () => {
   const handleSubmit = async (event) => {
     event.preventDefault();
     const sanitizedEmail = email.trim().toLowerCase();
-
     if (!sanitizedEmail) {
       setSubmitStatus("error");
       setStatusMessage("Please enter a valid email address.");
       return;
     }
-
     setIsSubmitting(true);
     setSubmitStatus(null);
     setStatusMessage("");
-
     try {
       let response;
       try {
@@ -67,25 +64,20 @@ const Subscription = () => {
           waitlistType: "subscription",
         });
       } catch (error) {
-        // Backward compatibility for servers that do not yet expose /waitlist.
         if (error.status === 404) {
           response = await httpClient.post("/api/contact-us", {
             fullName: "Subscription Waitlist User",
             email: sanitizedEmail,
             subject: "Subscription Waitlist Request",
-            message:
-              "Please add this email to the TrusonXchanger Subscription waitlist.",
+            message: "Please add this email to the TrusonXchanger Subscription waitlist.",
           });
         } else {
           throw error;
         }
       }
-
       if (response.data?.success) {
         setSubmitStatus("success");
-        setStatusMessage(
-          "Thank you. You have been added to the TrusonXchanger Subscription waitlist.",
-        );
+        setStatusMessage("Thank you. You have been added to the TrusonXchanger Subscription waitlist.");
         setEmail("");
       } else {
         setSubmitStatus("error");
@@ -93,10 +85,7 @@ const Subscription = () => {
       }
     } catch (error) {
       setSubmitStatus("error");
-      setStatusMessage(
-        error.message ||
-          "Unable to submit your request right now. Please try again.",
-      );
+      setStatusMessage(error.message || "Unable to submit your request right now. Please try again.");
     } finally {
       setIsSubmitting(false);
     }
@@ -106,10 +95,7 @@ const Subscription = () => {
     <>
       <main className="sub-page" aria-labelledby="sub-page-title">
         <Container className="sub-container">
-          <section
-            className="sub-hero-card"
-            aria-label="Subscription services coming soon"
-          >
+          <section className="sub-hero-card" aria-label="Subscription services coming soon">
             <p className="sub-kicker">Enterprise Membership Infrastructure</p>
             <h1 id="sub-page-title" className="sub-title">
               Premium Subscription Services
@@ -148,9 +134,7 @@ const Subscription = () => {
               phases and membership availability.
             </p>
             <form className="sub-form" onSubmit={handleSubmit}>
-              <label htmlFor="subscription-email" className="sub-sr-only">
-                Email address
-              </label>
+              <label htmlFor="subscription-email" className="sub-sr-only">Email address</label>
               <input
                 id="subscription-email"
                 type="email"
@@ -168,9 +152,7 @@ const Subscription = () => {
             </form>
             {submitStatus && (
               <p
-                className={`sub-form-feedback ${
-                  submitStatus === "success" ? "sub-success" : "sub-error"
-                }`}
+                className={`sub-form-feedback ${submitStatus === "success" ? "sub-success" : "sub-error"}`}
                 role="status"
                 aria-live="polite"
               >

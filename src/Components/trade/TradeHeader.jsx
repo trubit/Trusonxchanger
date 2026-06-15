@@ -1,6 +1,12 @@
 import React from "react";
+import { useAppContext } from "../common/AppContext";
+import {
+  formatCompactCurrencyAmount,
+  formatPriceAmount,
+} from "../../utils/currencyFormat";
 
 const TradeHeader = ({ ticker }) => {
+  const { currency, rates } = useAppContext();
   const isUp = ticker.change24h >= 0;
 
   return (
@@ -14,7 +20,7 @@ const TradeHeader = ({ ticker }) => {
 
       <div className="d-flex flex-column">
         <strong className={`tx-last-price ${isUp ? "tx-change-up" : "tx-change-down"}`}>
-          {ticker.lastPrice.toLocaleString(undefined, { minimumFractionDigits: 2 })}
+          {formatPriceAmount(ticker.lastPrice, currency, rates)}
         </strong>
         <p className="mb-0">Last Price</p>
       </div>
@@ -27,18 +33,20 @@ const TradeHeader = ({ ticker }) => {
       </div>
 
       <div className="d-flex flex-column">
-        <strong>{ticker.high24h.toLocaleString()}</strong>
+        <strong>{formatPriceAmount(ticker.high24h, currency, rates)}</strong>
         <p className="mb-0">24h High</p>
       </div>
 
       <div className="d-flex flex-column">
-        <strong>{ticker.low24h.toLocaleString()}</strong>
+        <strong>{formatPriceAmount(ticker.low24h, currency, rates)}</strong>
         <p className="mb-0">24h Low</p>
       </div>
 
       <div className="d-flex flex-column">
-        <strong>{ticker.volumeQuote24h.toLocaleString()}</strong>
-        <p className="mb-0">24h Volume (USDT)</p>
+        <strong>
+          {formatCompactCurrencyAmount(ticker.volumeQuote24h, currency, rates)}
+        </strong>
+        <p className="mb-0">{`24h Volume (${currency})`}</p>
       </div>
     </div>
   );

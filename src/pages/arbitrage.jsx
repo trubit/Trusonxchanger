@@ -43,17 +43,14 @@ const Artbitrage = () => {
   const handleSubmit = async (event) => {
     event.preventDefault();
     const sanitizedEmail = email.trim().toLowerCase();
-
     if (!sanitizedEmail) {
       setSubmitStatus("error");
       setStatusMessage("Please enter a valid email address.");
       return;
     }
-
     setIsSubmitting(true);
     setSubmitStatus(null);
     setStatusMessage("");
-
     try {
       let response;
       try {
@@ -62,25 +59,20 @@ const Artbitrage = () => {
           waitlistType: "arbitrage",
         });
       } catch (error) {
-        // Backward compatibility for servers that do not yet expose /waitlist.
         if (error.status === 404) {
           response = await httpClient.post("/api/contact-us", {
             fullName: "Arbitrage Waitlist User",
             email: sanitizedEmail,
             subject: "Arbitrage Waitlist Request",
-            message:
-              "Please add this email to the TrusonXchanger Arbitrage waitlist.",
+            message: "Please add this email to the TrusonXchanger Arbitrage waitlist.",
           });
         } else {
           throw error;
         }
       }
-
       if (response.data?.success) {
         setSubmitStatus("success");
-        setStatusMessage(
-          "Thank you. You have been added to the TrusonXchanger Arbitrage waitlist.",
-        );
+        setStatusMessage("Thank you. You have been added to the TrusonXchanger Arbitrage waitlist.");
         setEmail("");
       } else {
         setSubmitStatus("error");
@@ -88,10 +80,7 @@ const Artbitrage = () => {
       }
     } catch (error) {
       setSubmitStatus("error");
-      setStatusMessage(
-        error.message ||
-          "Unable to submit your request right now. Please try again.",
-      );
+      setStatusMessage(error.message || "Unable to submit your request right now. Please try again.");
     } finally {
       setIsSubmitting(false);
     }
@@ -123,10 +112,7 @@ const Artbitrage = () => {
             </p>
           </section>
 
-          <section
-            className="arb-highlights-section"
-            aria-label="Arbitrage capability highlights"
-          >
+          <section className="arb-highlights-section" aria-label="Arbitrage capability highlights">
             <h2 className="arb-section-title">Core Capabilities In Development</h2>
             <div className="arb-highlights-grid">
               {arbitrageHighlights.map((item) => (
@@ -145,9 +131,7 @@ const Artbitrage = () => {
               becomes available.
             </p>
             <form className="arb-form" onSubmit={handleSubmit}>
-              <label htmlFor="arbitrage-email" className="arb-sr-only">
-                Email address
-              </label>
+              <label htmlFor="arbitrage-email" className="arb-sr-only">Email address</label>
               <input
                 id="arbitrage-email"
                 type="email"
@@ -165,9 +149,7 @@ const Artbitrage = () => {
             </form>
             {submitStatus && (
               <p
-                className={`arb-form-feedback ${
-                  submitStatus === "success" ? "arb-success" : "arb-error"
-                }`}
+                className={`arb-form-feedback ${submitStatus === "success" ? "arb-success" : "arb-error"}`}
                 role="status"
                 aria-live="polite"
               >

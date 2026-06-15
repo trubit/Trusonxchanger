@@ -1,27 +1,22 @@
-// src/components/LangCurrencyModal.jsx
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Button, Modal, Tabs, Tab, ListGroup } from "react-bootstrap";
 import { useAppContext } from "./AppContext";
 import "../../styles/LangCurrencyModal.css";
 
-// Language/currency selector modal.
+// Language and currency selector modal.
 const LangCurrencyModal = () => {
   const {
+    language,
+    setLanguage,
     currency,
     setCurrency,
     rates,
     ratesLoading,
     ratesError,
-    setLanguage,
   } = useAppContext();
 
-  // Language is handled by Google Translate — we only store the code
-  const [selectedLang, setSelectedLang] = useState(
-    localStorage.getItem("language") || "en",
-  );
   const [showModal, setShowModal] = useState(false);
 
-  // Language options (Google Translate codes)
   const languages = [
     { code: "en", name: "English" },
     { code: "es", name: "Spanish" },
@@ -31,7 +26,6 @@ const LangCurrencyModal = () => {
     { code: "zh-CN", name: "Chinese (Simplified)" },
   ];
 
-  // Currency options
   const currencies = [
     { code: "USD", name: "US Dollar" },
     { code: "EUR", name: "Euro" },
@@ -40,44 +34,19 @@ const LangCurrencyModal = () => {
     { code: "CAD", name: "Canadian Dollar" },
   ];
 
-  // Auto-switch Google Translate when language changes
-  useEffect(() => {
-    localStorage.setItem("language", selectedLang);
-
-    // Tell Google Translate to switch language
-    const googleWidget = window.google?.translate?.TranslateElement?.Inst;
-    if (googleWidget) {
-      googleWidget.setLangPair("en", selectedLang);
-    } else {
-      // Fallback: add ?lang=xx to URL (works in many cases)
-      const url = new URL(window.location);
-      url.searchParams.set("lang", selectedLang);
-      if (url.searchParams.get("lang") !== selectedLang) {
-        window.location.href = url.toString();
-      }
-    }
-  }, [selectedLang]);
-
-  // Save currency
-  useEffect(() => {
-    localStorage.setItem("currency", currency);
-  }, [currency]);
-
   return (
     <>
-      {/* Compact button showing current language & currency */}
       <Button
         variant="dark"
         size="sm"
         className="tx-lang-currency-btn rounded-pill px-3 py-1 d-flex align-items-center gap-2 shadow-sm"
         onClick={() => setShowModal(true)}
       >
-        <span className="fw-bold">{selectedLang.toUpperCase()}</span>
-        <span className="text-muted">/</span>
-        <span className="fw-bold">{currency}</span>
+        <span className="tx-lc-pill">{language.toUpperCase()}</span>
+        <span className="tx-lc-separator">/</span>
+        <span className="tx-lc-pill">{currency}</span>
       </Button>
 
-      {/* Modal for selection */}
       <Modal
         show={showModal}
         onHide={() => setShowModal(false)}
@@ -91,43 +60,35 @@ const LangCurrencyModal = () => {
           </Modal.Title>
         </Modal.Header>
 
-        <Modal.Body className="bg-dark text-white p-0">
+        <Modal.Body className="bg-dark text-white p-0 tx-lc-modal-body">
           <Tabs
             defaultActiveKey="language"
             id="lang-currency-tabs"
-            className="border-0 mb-0"
+            className="border-0 mb-0 tx-lc-tabs"
             fill
           >
-            {/* Language Tab */}
             <Tab eventKey="language" title="Language">
-              <ListGroup variant="flush">
+              <ListGroup variant="flush" className="tx-lc-list">
                 {languages.map((lang) => (
                   <ListGroup.Item
                     key={lang.code}
                     action
-                    active={lang.code === selectedLang}
+                    active={lang.code === language}
                     onClick={() => {
-                      setSelectedLang(lang.code); // Your local state
-                      setLanguage(lang.code); // Global context — triggers Google
+                      setLanguage(lang.code);
                       setShowModal(false);
                     }}
-                    className="bg-transparent border-0 py-3 px-4 text-white cursor-pointer"
-                    style={{
-                      backgroundColor:
-                        lang.code === selectedLang
-                          ? "#22c55e33"
-                          : "transparent",
-                    }}
+                    className="tx-lc-item tx-lc-item-language bg-transparent border-0 py-3 px-4 text-white cursor-pointer"
                   >
-                    {lang.name} ({lang.code.toUpperCase()})
+                    <span className="tx-lc-item-name">{lang.name}</span>
+                    <span className="tx-lc-item-code">{lang.code.toUpperCase()}</span>
                   </ListGroup.Item>
                 ))}
               </ListGroup>
             </Tab>
 
-            {/* Currency Tab with live rates */}
             <Tab eventKey="currency" title="Currency">
-              <ListGroup variant="flush">
+              <ListGroup variant="flush" className="tx-lc-list">
                 {currencies.map((curr) => (
                   <ListGroup.Item
                     key={curr.code}
@@ -137,27 +98,22 @@ const LangCurrencyModal = () => {
                       setCurrency(curr.code);
                       setShowModal(false);
                     }}
-                    className="bg-transparent border-0 py-3 px-4 text-white cursor-pointer d-flex justify-content-between align-items-center"
-                    style={{
-                      backgroundColor:
-                        curr.code === currency ? "#22c55e33" : "transparent",
-                    }}
+                    className="tx-lc-item tx-lc-item-currency bg-transparent border-0 py-3 px-4 text-white cursor-pointer d-flex justify-content-between align-items-center"
                   >
-                    <span>
-                      {curr.name} ({curr.code})
+                    <span className="tx-lc-currency-name">
+                      {curr.name} <span className="tx-lc-item-code">{curr.code}</span>
                     </span>
 
-                    {/* Real-time rate */}
                     {ratesLoading ? (
-                      <span className="text-muted small">Loading...</span>
+                      <span className="text-muted small tx-lc-rate">Loading...</span>
                     ) : ratesError ? (
-                      <span className="text-danger small">Error</span>
+                      <span className="text-danger small tx-lc-rate">Error</span>
                     ) : rates?.[curr.code] ? (
-                      <span className="text-muted small">
+                      <span className="text-muted small tx-lc-rate">
                         1 USD = {rates[curr.code].toFixed(4)}
                       </span>
                     ) : (
-                      <span className="text-muted small">—</span>
+                      <span className="text-muted small tx-lc-rate">-</span>
                     )}
                   </ListGroup.Item>
                 ))}

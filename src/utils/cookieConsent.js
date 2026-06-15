@@ -224,10 +224,7 @@ const loadGoogleTranslateScript = async () => {
   );
 };
 
-const loadGoogleIdentityScript = () =>
-  appendScript("xch-google-identity-script", "https://accounts.google.com/gsi/client");
-
-scriptRegistry.functional.push(loadGoogleIdentityScript, loadGoogleTranslateScript);
+scriptRegistry.functional.push(loadGoogleTranslateScript);
 
 export const registerConsentScript = (category, loader) => {
   if (!scriptRegistry[category] || typeof loader !== "function") {

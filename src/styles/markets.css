@@ -1,0 +1,134 @@
+/* ── Markets Page ───────────────────────────────────────────────────────────── */
+
+.tx-markets-page {
+  min-height: 100vh;
+  background: #0b0e11;
+  color: #eaecef;
+}
+
+.tx-markets-title {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: #f0b90b;
+}
+
+.tx-markets-sub {
+  font-size: 0.875rem;
+}
+
+.tx-live-badge {
+  font-size: 0.75rem;
+  letter-spacing: 0.04em;
+  padding: 0.35em 0.7em;
+}
+
+/* ── Search ── */
+.tx-search-icon {
+  background: #1e2329;
+  border-color: #2b3139;
+  color: #848e9c;
+}
+.tx-search-input {
+  background: #1e2329 !important;
+  border-color: #2b3139 !important;
+  color: #eaecef !important;
+}
+.tx-search-input::placeholder { color: #848e9c; }
+.tx-search-input:focus {
+  box-shadow: 0 0 0 2px rgba(240, 185, 11, 0.25) !important;
+  border-color: #f0b90b !important;
+}
+
+/* ── Table ── */
+.tx-markets-table-wrap {
+  background: #1e2329;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid #2b3139;
+}
+
+.tx-markets-table {
+  margin: 0;
+  color: #eaecef;
+}
+.tx-markets-table thead th {
+  background: #1e2329;
+  color: #848e9c;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  border-color: #2b3139;
+  padding: 0.85rem 1rem;
+  white-space: nowrap;
+}
+.tx-markets-table tbody td {
+  background: #1e2329;
+  border-color: #2b3139;
+  padding: 0.8rem 1rem;
+  vertical-align: middle;
+  font-size: 0.875rem;
+  transition: background 0.15s;
+}
+.tx-markets-table tbody tr:hover td {
+  background: #252930;
+}
+
+.tx-sortable {
+  cursor: pointer;
+  user-select: none;
+}
+.tx-sortable:hover { color: #f0b90b; }
+.tx-sort-icon { font-size: 0.7rem; margin-left: 3px; }
+
+/* ── Asset cell ── */
+.tx-asset-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #f0b90b 0%, #e6950c 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 0.8rem;
+  color: #000;
+  flex-shrink: 0;
+}
+.tx-quote { font-size: 0.8rem; }
+
+/* ── Colour coding ── */
+.tx-up   { color: #0ecb81 !important; }
+.tx-down { color: #f6465d !important; }
+
+/* ── Price flash animation ── */
+@keyframes flashGreen {
+  0%   { background-color: rgba(14, 203, 129, 0.18); }
+  100% { background-color: transparent; }
+}
+@keyframes flashRed {
+  0%   { background-color: rgba(246, 70, 93, 0.18); }
+  100% { background-color: transparent; }
+}
+.flash-green td { animation: flashGreen 0.6s ease-out; }
+.flash-red   td { animation: flashRed   0.6s ease-out; }
+
+/* ── Trade button ── */
+.tx-trade-btn {
+  background: transparent;
+  border: 1px solid #f0b90b;
+  color: #f0b90b;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  padding: 0.25rem 0.75rem;
+  transition: all 0.15s;
+  white-space: nowrap;
+}
+.tx-trade-btn:hover {
+  background: #f0b90b;
+  color: #000;
+}
+
+/* ── Empty state ── */
+.tx-empty-state { color: #848e9c; }
+.tx-empty-icon  { font-size: 3rem; }

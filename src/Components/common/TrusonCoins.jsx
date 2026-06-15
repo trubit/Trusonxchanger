@@ -1,9 +1,15 @@
 import { useMemo } from "react";
 import { useTrusonCoinQuery } from "../../hooks/queries/useMarketQueries";
+import { useAppContext } from "./AppContext";
+import {
+  formatCompactCurrencyAmount,
+  formatPriceAmount,
+} from "../../utils/currencyFormat";
 
 // Live row for TrusonCoin (from backend catalog).
 const TrusonCoins = () => {
   const { data: coin, error } = useTrusonCoinQuery();
+  const { currency, rates } = useAppContext();
 
   const formatted = useMemo(() => {
     if (!coin) return null;
@@ -37,12 +43,12 @@ const TrusonCoins = () => {
   return (
     <tr>
       <td>TRUSON</td>
-      <td>${formatted.price.toFixed(4)}</td>
+      <td>{formatPriceAmount(formatted.price, currency, rates)}</td>
       <td className={formatted.isPositive ? "text-success" : "text-danger"}>
         {formatted.change24h > 0 ? "+" : ""}
         {formatted.change24h.toFixed(2)}%
       </td>
-      <td>{formatted.volume24h.toLocaleString()}</td>
+      <td>{formatCompactCurrencyAmount(formatted.volume24h, currency, rates)}</td>
     </tr>
   );
 };

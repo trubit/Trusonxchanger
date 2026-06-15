@@ -1,6 +1,7 @@
 import { lazy, Suspense } from "react";
 import { Route, Routes } from "react-router-dom";
 import MainLayout from "../layouts/MainLayout";
+import BlogDetail from "../pages/blogs/blog-detail";
 
 const Home = lazy(() => import("../pages/home"));
 const Login = lazy(() => import("../pages/login"));
@@ -28,11 +29,18 @@ const Terms = lazy(() => import("../pages/terms"));
 const Dashborad = lazy(() => import("../pages/Dashboard"));
 const Blogs = lazy(() => import("../pages/blogs/blogs"));
 const BlogUpdate = lazy(() => import("../Components/common/BlogUpdate"));
-const BlogDetail = lazy(() => import("../pages/blogs/blog-detail"));
 const Spot = lazy(() => import("../Components/trade/Spot"));
 const Futures = lazy(() => import("../Components/trade/Futures"));
 const Support = lazy(() => import("../Components/common/Support"));
 const VerifyEmail = lazy(() => import("../pages/verify-email"));
+const DashTrade = lazy(() => import("../pages/dashboard/DashTrade"));
+const DashSpot = lazy(() => import("../pages/dashboard/DashSpot"));
+const DashFutures = lazy(() => import("../pages/dashboard/DashFutures"));
+const DashArbitrage = lazy(() => import("../pages/dashboard/DashArbitrage"));
+const DashSubscription = lazy(() => import("../pages/dashboard/DashSubscription"));
+const DashContact = lazy(() => import("../pages/dashboard/DashContact"));
+const Wallet = lazy(() => import("../pages/wallet"));
+const Markets = lazy(() => import("../pages/markets"));
 
 const RouteLoader = () => (
   <div className="container py-4 text-center">Loading page...</div>
@@ -73,15 +81,22 @@ const AppRoutes = () => (
         <Route path="/blog" element={<Blogs />} />
         <Route path="/Blogs" element={<Blogs />} />
         <Route path="/BlogUpdate" element={<BlogUpdate />} />
-        <Route path="/blogs/:id" element={<BlogDetail />} />
+<Route path="/blogs/:id" element={<BlogDetail />} />
         <Route path="/Spot" element={<Spot />} />
         <Route path="/Futures" element={<Futures />} />
         <Route path="/Support" element={<Support />} />
         <Route path="/verify-email" element={<VerifyEmail />} />
+        <Route path="/Dashboard/trade" element={<DashTrade />} />
+        <Route path="/Dashboard/spot" element={<DashSpot />} />
+        <Route path="/Dashboard/futures" element={<DashFutures />} />
+        <Route path="/Dashboard/arbitrage" element={<DashArbitrage />} />
+        <Route path="/Dashboard/subscription" element={<DashSubscription />} />
+        <Route path="/Dashboard/contact" element={<DashContact />} />
+        <Route path="/wallet" element={<Wallet />} />
+        <Route path="/Dashboard/markets" element={<Markets />} />
       </Routes>
     </Suspense>
   </MainLayout>
 );
 
 export default AppRoutes;
-
