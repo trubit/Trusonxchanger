@@ -1,5 +1,6 @@
 import { Link, useNavigate } from "react-router-dom";
 import { useAuthStore } from "../../store/authStore";
+import NotificationBell from "./NotificationBell";
 import "../../styles/dashboard.css";
 
 const ConnectionDot = ({ status }) => {
@@ -54,6 +55,7 @@ const DashNavbar = ({ onMenuClick, connectionStatus }) => {
 
       <div className="dash-navbar-right">
         {connectionStatus && <ConnectionDot status={connectionStatus} />}
+        <NotificationBell />
         <div className="dash-user-chip">
           <i className="bi bi-person-circle" />
           <span className="dash-user-email">{user?.email || "—"}</span>

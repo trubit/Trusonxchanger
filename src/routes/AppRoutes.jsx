@@ -1,7 +1,8 @@
 import { lazy, Suspense } from "react";
-import { Route, Routes } from "react-router-dom";
+import { Navigate, Route, Routes } from "react-router-dom";
 import MainLayout from "../layouts/MainLayout";
-import BlogDetail from "../pages/blogs/blog-detail";
+
+const BlogDetail = lazy(() => import("../pages/blogs/blog-detail"));
 
 const Home = lazy(() => import("../pages/home"));
 const Login = lazy(() => import("../pages/login"));
@@ -41,6 +42,7 @@ const DashSubscription = lazy(() => import("../pages/dashboard/DashSubscription"
 const DashContact = lazy(() => import("../pages/dashboard/DashContact"));
 const Wallet = lazy(() => import("../pages/wallet"));
 const Markets = lazy(() => import("../pages/markets"));
+const DashNotifications = lazy(() => import("../pages/dashboard/DashNotifications"));
 
 const RouteLoader = () => (
   <div className="container py-4 text-center">Loading page...</div>
@@ -93,7 +95,9 @@ const AppRoutes = () => (
         <Route path="/Dashboard/subscription" element={<DashSubscription />} />
         <Route path="/Dashboard/contact" element={<DashContact />} />
         <Route path="/wallet" element={<Wallet />} />
+        <Route path="/markets" element={<Navigate to="/Dashboard/markets" replace />} />
         <Route path="/Dashboard/markets" element={<Markets />} />
+        <Route path="/Dashboard/notifications" element={<DashNotifications />} />
       </Routes>
     </Suspense>
   </MainLayout>

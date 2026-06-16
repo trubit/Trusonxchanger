@@ -5,6 +5,7 @@ import { setWalletIo } from "./walletEvents.js";
 import { setOrderIo } from "./orderEvents.js";
 import { setMEIo } from "./meEvents.js";
 import { setMarketDataIo } from "./marketDataEvents.js";
+import { setNotificationIo } from "./notificationEvents.js";
 
 const TICKER_INTERVAL_MS = 5_000;
 
@@ -19,6 +20,7 @@ export const setupTradeSocketServer = (httpServer, { cors } = {}) => {
   setOrderIo(io);
   setMEIo(io);
   setMarketDataIo(io);
+  setNotificationIo(io);
 
   io.on("connection", (socket) => {
     // ── Market data subscriptions ──────────────────────────────────────────
@@ -64,6 +66,17 @@ export const setupTradeSocketServer = (httpServer, { cors } = {}) => {
         if (payload?.sub) socket.join(`orders:${payload.sub}`);
       } catch {
         // Invalid or expired token — silently ignore.
+      }
+    });
+
+    // ── Notification room (Stage 6) ───────────────────────────────────────
+    socket.on("join_notifications", ({ token } = {}) => {
+      try {
+        if (!token) return;
+        const payload = jwt.verify(token, process.env.JWT_SECRET);
+        if (payload?.sub) socket.join(`notifications:${payload.sub}`);
+      } catch {
+        // Invalid token — silently ignore.
       }
     });
 

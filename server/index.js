@@ -37,7 +37,9 @@ import marketRoutes from "./routes/market.js";
 import dashboardRoutes from "./routes/dashboard.js";
 import engineRoutes from "./routes/engine.js";
 import marketDataRoutes from "./routes/marketData.js";
+import notificationRoutes from "./routes/notifications.js";
 import { setupTradeSocketServer } from "./socket/socketServer.js";
+import { notificationService } from "./notifications/NotificationService.js";
 import { MatchingEngine } from "./engine/MatchingEngine.js";
 import { TradeExecutor } from "./engine/TradeExecutor.js";
 import { mePublisher } from "./engine/publisher.js";
@@ -159,6 +161,7 @@ app.use("/api/newsletter", newsletterRoutes);
 app.use("/api/currency", currencyRoutes);
 app.use("/api/engine", engineRoutes);
 app.use("/api/market-data", marketDataRoutes);
+app.use("/api/notifications", notificationRoutes);
 
 app.use(notFound);
 app.use(errorHandler);
@@ -213,6 +216,13 @@ const startServer = async () => {
       logger.error({ err: err.message }, "[Market] Market data service failed to start.");
     }
 
+    // Initialize notification service (Stage 6 — subscribes to Redis + persists + emits)
+    try {
+      await notificationService.start();
+    } catch (err) {
+      logger.error({ err: err.message }, "[Notif] Notification service failed to start.");
+    }
+
     httpServer.listen(PORT, () => {
       logger.info(
         {
@@ -241,6 +251,7 @@ const startServer = async () => {
       try {
         await closeHttpServer(httpServer);
         await Promise.allSettled([
+          notificationService.stop(),
           closeQueues(),
           closeRedisConnections(),
           mongoose.connection.close(),

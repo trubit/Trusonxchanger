@@ -2,6 +2,7 @@ import Wallet from "../models/Wallet.js";
 import Transaction from "../models/Transaction.js";
 import { emitWalletUpdated, emitTransactionCreated } from "../socket/walletEvents.js";
 import { isSupported, getMeta, ASSETS } from "../config/supportedAssets.js";
+import { notificationService } from "../notifications/NotificationService.js";
 
 // Default wallets created for every new user (starters — other assets auto-create on first deposit).
 const DEFAULT_ASSETS = ["USDT", "BTC", "ETH"];
@@ -99,6 +100,8 @@ export const deposit = async (userId, { asset, amount }) => {
   emitWalletUpdated(userId, { wallets: [updated] });
   emitTransactionCreated(userId, { transaction: tx });
 
+  notificationService.notifyWallet(userId, { type: "deposit", asset, amount, status: "completed" }).catch(() => {});
+
   return { wallet: updated, transaction: tx };
 };
 
@@ -154,6 +157,8 @@ export const requestWithdrawal = async (userId, { asset, amount, address, networ
 
   emitWalletUpdated(userId, { wallets: [updated] });
   emitTransactionCreated(userId, { transaction: tx });
+
+  notificationService.notifyWallet(userId, { type: "withdrawal", asset, amount, status: "pending" }).catch(() => {});
 
   return { wallet: updated, transaction: tx };
 };

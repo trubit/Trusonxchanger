@@ -33,6 +33,9 @@ const DashSidebar = ({ open, onClose, onLogout }) => (
         </Link>
 
         <p className="dash-sidebar-section">Account</p>
+        <Link to="/Dashboard/notifications" className="dash-sidebar-link" onClick={onClose}>
+          <i className="bi bi-bell-fill" /> Notifications
+        </Link>
         <Link to="/Dashboard/subscription" className="dash-sidebar-link" onClick={onClose}>
           <i className="bi bi-star-fill" /> Subscription
         </Link>

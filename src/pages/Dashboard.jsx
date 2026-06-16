@@ -203,7 +203,8 @@ const StatGrid = ({ portfolio, user, tickers, wallets, isLoading }) => {
     let a = 0, l = 0;
     for (const w of wallets) {
       const usd = w.balanceUsdt ?? 0;
-      const bal = w.balance || 1;
+      const bal = w.balance ?? 0;
+      if (bal <= 0) { a += usd; continue; }
       a += usd * ((w.available ?? 0) / bal);
       l += usd * ((w.locked   ?? 0) / bal);
     }

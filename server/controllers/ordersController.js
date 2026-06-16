@@ -6,6 +6,7 @@ import {
   emitOrderUpdated,
 } from "../socket/orderEvents.js";
 import { redisClients } from "../config/redis.js";
+import { notificationService } from "../notifications/NotificationService.js";
 
 // Publish order event to Redis channel for future Stage-4 consumers.
 const publishToRedis = async (event, payload) => {
@@ -23,6 +24,10 @@ export const createOrder = async (req, res) => {
 
   // User-specific socket event.
   emitOrderCreated(req.user.id, { order, fills });
+
+  notificationService.notifyOrder(req.user.id, {
+    action: "created", symbol: order.symbol, side: order.side, price: order.price, amount: order.amount,
+  }).catch(() => {});
 
   // Market-wide socket event (symbol room).
   const pub = req.app?.locals?.tradePublisher;
@@ -62,6 +67,10 @@ export const cancelOrder = async (req, res) => {
   const { order, marketState } = result;
 
   emitOrderCancelled(req.user.id, { order });
+
+  notificationService.notifyOrder(req.user.id, {
+    action: "cancelled", symbol: order.symbol, side: order.side, price: order.price, amount: order.amount,
+  }).catch(() => {});
 
   const pub = req.app?.locals?.tradePublisher;
   if (pub) await pub.publishOrderEvent(order.symbol, "order_cancelled", { order });

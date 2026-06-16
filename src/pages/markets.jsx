@@ -10,6 +10,11 @@ import DashSidebar from "../Components/dashboard/DashSidebar";
 import "../styles/markets.css";
 import "../styles/dashboard.css";
 
+// ── Constants ─────────────────────────────────────────────────────────────────
+
+const QUOTE_ASSETS = ["USDT", "BTC", "ETH"];
+const QUOTE_RE     = new RegExp(`(${QUOTE_ASSETS.join("|")})$`);
+
 // ── Formatting helpers ─────────────────────────────────────────────────────────
 
 const fmt = {
@@ -45,8 +50,9 @@ const TickerRow = ({ ticker, onTrade }) => {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [ticker.lastPrice]);
 
-  const baseAsset  = ticker.symbol.replace(/USDT$|BTC$|ETH$|BNB$/, "");
-  const quoteAsset = ticker.symbol.slice(baseAsset.length);
+  const m          = ticker.symbol.match(QUOTE_RE);
+  const quoteAsset = m ? m[1] : "";
+  const baseAsset  = quoteAsset ? ticker.symbol.slice(0, -quoteAsset.length) : ticker.symbol;
 
   return (
     <tr className={flash ? `ticker-row ${flash}` : "ticker-row"}>

@@ -34,5 +34,9 @@ export const queryKeys = {
   assets: {
     all: ["assets", "supported"],
   },
+  notifications: {
+    list:        (params = {}) => ["notifications", "list", params],
+    unreadCount: ["notifications", "unread-count"],
+  },
 };
 

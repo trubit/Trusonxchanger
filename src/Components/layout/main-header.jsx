@@ -73,7 +73,7 @@ const MainHeader = () => {
               className="tx-main-link"
               onClick={() => setExpanded(false)}
             >
-              Sport
+              Spot
             </Nav.Link>
             <Nav.Link
               as={NavLink}

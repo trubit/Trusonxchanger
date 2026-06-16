@@ -1,5 +1,5 @@
 import { useState, useMemo } from "react";
-import { Navigate, useNavigate, Link } from "react-router-dom";
+import { Navigate, useNavigate, useSearchParams, Link } from "react-router-dom";
 import { useAuthStore } from "../../store/authStore";
 import {
   useCancelOrderMutation,
@@ -116,10 +116,12 @@ const PairSelector = ({ pairs, activeSymbol, onSelect }) => {
 
 // ── Ticker Bar ────────────────────────────────────────────────────────────────
 
+const QUOTE_RE = new RegExp(`^(.+?)(${QUOTE_ASSETS.join("|")})$`);
+
 const TickerBar = ({ symbol, tickers, assets }) => {
-  const pair   = symbol.match(/^(.+?)(USDT|BTC|ETH)$/) || [];
-  const base   = pair[1] || symbol.slice(0, -4);
-  const quote  = pair[2] || symbol.slice(-4);
+  const pair   = symbol.match(QUOTE_RE) || [];
+  const base   = pair[1] || symbol;
+  const quote  = pair[2] || "";
   const ticker = tickers?.[symbol] || {};
   const meta   = assets?.find?.(a => a.symbol === base) || {};
 
@@ -480,8 +482,11 @@ const DashTrade = () => {
   const { isAuthenticated } = useAuthStore();
 
   // ── ALL HOOKS BEFORE CONDITIONAL RETURN ──────────────────────────────────
+  const [searchParams] = useSearchParams();
   const [sidebarOpen,   setSidebarOpen]   = useState(false);
-  const [activeSymbol,  setActiveSymbol]  = useState("BTCUSDT");
+  const [activeSymbol,  setActiveSymbol]  = useState(
+    searchParams.get("pair") || "BTCUSDT"
+  );
 
   const { data: wallets = [] } = useMyWalletsQuery(true);
   const { data: assets  = [] } = useSupportedAssets();
@@ -503,7 +508,6 @@ const DashTrade = () => {
     }
     // Sort: USDT pairs first, then BTC, then ETH; alphabetical within each group
     list.sort((a, b) => {
-      const qi = QUOTE_ASSETS.indexOf;
       const qa = QUOTE_ASSETS.indexOf(a.quote);
       const qb = QUOTE_ASSETS.indexOf(b.quote);
       if (qa !== qb) return qa - qb;

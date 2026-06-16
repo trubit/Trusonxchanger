@@ -19,6 +19,7 @@ const HIDE_HEADER_ROUTES = [
   "/Dashboard/subscription",
   "/Dashboard/contact",
   "/Dashboard/markets",
+  "/Dashboard/notifications",
   "/wallet",
 ];
 
